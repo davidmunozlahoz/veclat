@@ -1,0 +1,160 @@
+\chapter{The basics}
+
+In this chapter we introduce vector lattices and prove some basic
+facts such as the Riesz decomposition theorem.
+
+\section{Vector lattices}
+
+\begin{definition}
+    \lean{VectorLattice}
+    \leanok
+    A \emph{vector lattice} is a real vector space $X$ together with a
+    lattice order $\le $ (i.e., a partial order for which any pair of
+    elements has a supremum and an infimum) satisfying:
+    \begin{enumerate}
+        \item if $x\le y$ and $z \in X$, then $x+z\le y+z$;
+        \item if $x\le y$ and $\lambda \in \R_+$, then $\lambda x\le
+            \lambda y$.
+    \end{enumerate}
+\end{definition}
+
+In this chapter, $X$ will always denote a vector lattice.
+
+\begin{definition}
+    \lean{posp,negp}
+    \leanok
+    For every $x \in X$, we define its \emph{positive part} as
+    $x_+=x\vee 0$, its \emph{negative part} as $x_-=(-x)\vee 0$, and its
+    \emph{absolute value} as $|x|=x\vee (-x)$.
+\end{definition}
+
+\begin{proposition}
+    \lean{nonneg_smul_sup,nonneg_smul_inf}
+    \leanok
+    For every $x,y \in X$ and $a \in \R_+$ the following hold:
+    \[
+    a(x\vee y)=(ax)\vee (ay)\text{ and }a(x\wedge y)=(ax)\wedge (ay).
+    \]
+\end{proposition}
+\begin{proof}
+    For $a=0$ the result is direct, so assume $a>0$.
+    Since $x\le x\vee y$, we have $ax \le a(x\vee y)$.
+    Similarly, $ay \le a(x\vee y)$. Therefore $(ax)\vee (ay)\le
+    a(x\vee y)$. To prove the reverse inequality, note that
+    $x=a^{-1}ax\le a^{-1}[(ax)\vee (ay)]$, and since the same is true
+    of $y$, it follows that
+    \[
+        x\vee y\le a^{-1}[(ax)\vee (ay)].
+    \]
+    Multiplying both sides by $a$, $a(x\vee y)\le (ax)\vee (ay)$. The
+    equality for the infimum follows from the identity $x\vee
+    y=-(-x)\wedge (-y)$ that is true in every lattice ordered group.
+\end{proof}
+
+Now we can explore some properties of the positive and negative parts.
+
+\begin{proposition}
+    \label{prop:posp_negp}
+    \lean{posp_sub_neg,posp_add_neg}
+    \leanok
+    For every $x \in X$:
+    \[
+    x=x_+ - x_- \text{ and }|x|=x_+ + x_-.
+    \]
+\end{proposition}
+\begin{proof}
+    For every $a$ and $b$ in a lattice ordered group, $a+b=a\vee
+    b+a\wedge b$. Putting $a=x$ and $b=0$:
+    \[
+    x=x\vee 0 + x\wedge 0=x_+ - (-x)\vee 0=x_+ - x_-.
+    \]
+    For the absolute value, compute:
+    \begin{align*}
+        x_+ + x_- &= 2x_+ - x\\
+                  &=(2x)\vee 0 - x\\
+                  &=x\vee (-x)
+                  &=|x|,
+    \end{align*}
+    where we are using that $c+a\vee b=(c+a)\vee (c+b)$ holds for
+    every $a,b,c$ in a lattice ordered group.
+\end{proof}
+
+\begin{lemma}
+    \lean{leq_posp_negp}
+    \leanok
+    For every $x,y \in X$, $x\le y$ if and only if both $x_+\le y_+$
+    and $y_-\le x_-$.
+\end{lemma}
+
+\begin{lemma}
+    \lean{sup_of_dis_eq_sum}
+    \leanok
+    Let $x,y \in X$ be such that $x\wedge y=0$. Then $x+y=x\vee y$.
+\end{lemma}
+
+The positive part (and therefore the negative part) is characterized
+by the following property.
+
+\begin{proposition}
+    \lean{uniqueness_posp}
+    \leanok
+    Let $x,u,v \in X$ be such that $x=u-v$ and $u\wedge v=0$. Then
+    $u=x_+$.
+\end{proposition}
+
+Next we provide some properties of the absolute value. All of them are
+already in \verb|mathlib| but, for some reason, the first and the
+second are only proved under the assumption that the space is totally
+ordered.
+
+\begin{lemma}
+    \lean{abs_eq_zero_iff_zero,abs_smul',Mathlib.Algebra.Order.Group.Unbundled.Abs}
+    \leanok
+    For every $x,y \in X$ and $a \in \R$:
+    \begin{enumerate}
+        \item $|x|=0$ if and only if $x=0$;
+        \item $|ax| = |a| |x|$;
+        \item $|x+y|\le |x| + |y|$.
+    \end{enumerate}
+\end{lemma}
+% \begin{proof}
+%     If $x=0$, clearly $|x|=0$. Suppose $|x|=0$, by
+%     \cref{prop:posp_negp} we have $0\le x_+=-x_-\le 0$, so that
+%     $x_+=x_-=0$ and, again by \cref{prop:posp_negp}, $x=0$.
+% \end{proof}
+
+To prove the Riesz decomposition theorem, we will need the following
+fact.
+
+\begin{lemma}
+    \lean{sub_inf_posp_sub}
+    \leanok
+    For every $x,y \in X$,
+    \[
+    x-x\wedge y=(x-y)_+.
+    \]
+\end{lemma}
+
+\begin{theorem}[Riesz decomposition]
+    \lean{Riesz_decomposition}
+    \leanok
+    Let $x,y,z \in X$ be positive elements satisfying $x\le y+z$. Then
+    there exist $0\le x_1\le y$ and $0\le x_2\le z$ such that
+    $x=x_1+x_2$.
+\end{theorem}
+
+From this point on, we will mostly deal with Archimedean vector
+lattices.
+
+\begin{definition}
+    A vector lattice $X$ is said to be \emph{Archimedean} if for every
+    $x,y \in X$ with $y>0$ there exists a natural number $n \in \N$
+    such that $x\le ny$.
+\end{definition}
+
+\begin{lemma}
+    \lean{arch'}
+    \leanok
+    Let $X$ be an Archimedean vector lattice. If $x,y \in X$ are such
+    that $nx\le y$ for all $n \in \N$, then $x\le 0$.
+\end{lemma}

@@ -1,0 +1,541 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dependency graph</title>
+  <meta name="generator" content="plasTeX" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles/theme-white.css" />
+  <link rel="stylesheet" href="styles/dep_graph.css" />
+  
+  <script type="text/x-mathjax-config">
+  
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  
+  </script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">  </script>
+
+
+<link rel="stylesheet" href="styles/extra_styles.css" />
+
+</head>
+
+<body>
+<header>
+  <a class="toc" href="index.html">Home</a>
+  <h1 id="doc_title">Dependencies</h1>
+</header>
+<div class="wrapper">
+<div class="content">
+  <div id="Legend">
+    <span id="legend_title" class="title">Legend
+    <div class="btn">
+       <div class="bar"></div>
+       <div class="bar"></div>
+       <div class="bar"></div>
+    </div></span> 
+    <dl class="legend">
+      
+      <dt>Boxes</dt><dd>definitions</dd>
+      
+      <dt>Ellipses</dt><dd>theorems and lemmas</dd>
+      
+      <dt>Blue border</dt><dd>the <em>statement</em> of this result is ready to be formalized; all prerequisites are done</dd>
+      
+      <dt>Orange border</dt><dd>the <em>statement</em> of this result is not ready to be formalized; the blueprint needs more work</dd>
+      
+      <dt>Blue background</dt><dd>the <em>proof</em> of this result is ready to be formalized; all prerequisites are done</dd>
+      
+      <dt>Green border</dt><dd>the <em>statement</em> of this result is formalized</dd>
+      
+      <dt>Green background</dt><dd>the <em>proof</em> of this result is formalized</dd>
+      
+      <dt>Dark green background</dt><dd>the <em>proof</em> of this result and all its ancestors are formalized</dd>
+      
+      <dt>Dark green border</dt><dd>this is in Mathlib</dd>
+      
+    </dl>
+  </div>
+    <div id="graph"></div>
+<div id="statements">
+
+    
+    <div class="dep-modal-container" id="a0000000005_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000005" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">1</span></div>
+    <div class="thm_thmcontent"><p> A <em>vector lattice</em> is a real vector space \(X\) together with a lattice order \(\le \) (i.e., a partial order for which any pair of elements has a supremum and an infimum) satisfying: </p>
+<ol class="enumerate">
+  <li><p>if \(x\le y\) and \(z \in X\), then \(x+z\le y+z\); </p>
+</li>
+  <li><p>if \(x\le y\) and \(\lambda \in \mathbb {R}_+\), then \(\lambda x\le \lambda y\). </p>
+</li>
+</ol>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000005">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/VectorLattice">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000006_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000006" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2</span></div>
+    <div class="thm_thmcontent"><p> For every \(x \in X\), we define its <em>positive part</em> as \(x_+=x\vee 0\), its <em>negative part</em> as \(x_-=(-x)\vee 0\), and its <em>absolute value</em> as \(|x|=x\vee (-x)\). </p>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000006">LaTeX</a>
+    
+    
+  <div class="tooltip">
+      <span class="lean_link">Lean</span>
+      <ul class="tooltip_list">
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/posp" class="lean_decl">posp</a></li>
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/negp" class="lean_decl">negp</a></li>
+        
+      </ul>
+  </div>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000007_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000007" style="display: none">
+    <div class="thm_thmheading">
+      <span class="proposition_thmcaption">
+      Proposition
+      </span>
+      <span class="proposition_thmlabel">3</span></div>
+    <div class="thm_thmcontent"><p> For every \(x,y \in X\) and \(a \in \mathbb {R}_+\) the following hold: </p>
+<div class="displaymath" id="a0000000009">
+  \[  a(x\vee y)=(ax)\vee (ay)\text{ and }a(x\wedge y)=(ax)\wedge (ay).  \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000007">LaTeX</a>
+    
+    
+  <div class="tooltip">
+      <span class="lean_link">Lean</span>
+      <ul class="tooltip_list">
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/nonneg_smul_sup" class="lean_decl">nonneg_smul_sup</a></li>
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/nonneg_smul_inf" class="lean_decl">nonneg_smul_inf</a></li>
+        
+      </ul>
+  </div>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000015_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000015" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">5</span></div>
+    <div class="thm_thmcontent"><p> For every \(x,y \in X\), \(x\le y\) if and only if both \(x_+\le y_+\) and \(y_-\le x_-\). </p>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000015">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/leq_posp_negp">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000016_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000016" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">6</span></div>
+    <div class="thm_thmcontent"><p> Let \(x,y \in X\) be such that \(x\wedge y=0\). Then \(x+y=x\vee y\). </p>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000016">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/sup_of_dis_eq_sum">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000017_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000017" style="display: none">
+    <div class="thm_thmheading">
+      <span class="proposition_thmcaption">
+      Proposition
+      </span>
+      <span class="proposition_thmlabel">7</span></div>
+    <div class="thm_thmcontent"><p> Let \(x,u,v \in X\) be such that \(x=u-v\) and \(u\wedge v=0\). Then \(u=x_+\). </p>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000017">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/uniqueness_posp">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000018_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000018" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">8</span></div>
+    <div class="thm_thmcontent"><p> For every \(x,y \in X\) and \(a \in \mathbb {R}\): </p>
+<ol class="enumerate">
+  <li><p>\(|x|=0\) if and only if \(x=0\); </p>
+</li>
+  <li><p>\(|ax| = |a| |x|\); </p>
+</li>
+  <li><p>\(|x+y|\le |x| + |y|\). </p>
+</li>
+</ol>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000018">LaTeX</a>
+    
+    
+  <div class="tooltip">
+      <span class="lean_link">Lean</span>
+      <ul class="tooltip_list">
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/abs_eq_zero_iff_zero" class="lean_decl">abs_eq_zero_iff_zero</a></li>
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/abs_smul'" class="lean_decl">abs_smul'</a></li>
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/Mathlib.Algebra.Order.Group.Unbundled.Abs" class="lean_decl">Mathlib.Algebra.Order.Group.Unbundled.Abs</a></li>
+        
+      </ul>
+  </div>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000019_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000019" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">9</span></div>
+    <div class="thm_thmcontent"><p> For every \(x,y \in X\), </p>
+<div class="displaymath" id="a0000000020">
+  \[  x-x\wedge y=(x-y)_+.  \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000019">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/sub_inf_posp_sub">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000021_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000021" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">10</span><span class="theorem_thmtitle">Riesz decomposition</span></div>
+    <div class="thm_thmcontent"><p>  Let \(x,y,z \in X\) be positive elements satisfying \(x\le y+z\). Then there exist \(0\le x_1\le y\) and \(0\le x_2\le z\) such that \(x=x_1+x_2\). </p>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000021">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/Riesz_decomposition">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000022_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000022" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">11</span></div>
+    <div class="thm_thmcontent"><p>A vector lattice \(X\) is said to be <em>Archimedean</em> if for every \(x,y \in X\) with \(y{\gt}0\) there exists a natural number \(n \in \mathbb {N}\) such that \(x\le ny\). </p>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000022">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="a0000000023_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="a0000000023" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">12</span></div>
+    <div class="thm_thmcontent"><p> Let \(X\) be an Archimedean vector lattice. If \(x,y \in X\) are such that \(nx\le y\) for all \(n \in \mathbb {N}\), then \(x\le 0\). </p>
+</div>
+
+    <a class="latex_link" href="sect0002.html#a0000000023">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/arch'">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="prop:posp_negp_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="prop:posp_negp" style="display: none">
+    <div class="thm_thmheading">
+      <span class="proposition_thmcaption">
+      Proposition
+      </span>
+      <span class="proposition_thmlabel">4</span></div>
+    <div class="thm_thmcontent"><p>  For every \(x \in X\): </p>
+<div class="displaymath" id="a0000000012">
+  \[  x=x_+ - x_- \text{ and }|x|=x_+ + x_-.  \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0002.html#prop:posp_negp">LaTeX</a>
+    
+    
+  <div class="tooltip">
+      <span class="lean_link">Lean</span>
+      <ul class="tooltip_list">
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/posp_sub_neg" class="lean_decl">posp_sub_neg</a></li>
+        
+           <li><a href="https://davidmunozlahoz.github.io/veclat/docs/find/#doc/posp_add_neg" class="lean_decl">posp_add_neg</a></li>
+        
+      </ul>
+  </div>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+</div>
+</div> <!-- content -->
+</div> <!-- wrapper -->
+<script src="js/jquery.min.js" type="text/javascript"></script>
+
+<script src="js/d3.min.js"></script>
+<script src="js/hpcc.min.js"></script>
+<script src="js/d3-graphviz.js"></script>
+
+<script type="text/javascript">
+const graphContainer = d3.select("#graph");
+const width = graphContainer.node().clientWidth;
+const height = graphContainer.node().clientHeight;
+
+
+graphContainer.graphviz({useWorker: true})
+    .width(width)
+    .height(height)
+    .fit(true)
+    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	a0000000005	[color=green,		fillcolor="#B0ECA3",		label=a0000000005,		shape=box,		style=filled];	a0000000022	[color=blue,		fillcolor="#A3D6FF",		label=a0000000022,		shape=box,		style=filled];	a0000000015	[color=green,		label=a0000000015,		shape=ellipse];	a0000000007	[color=green,		fillcolor="#A3D6FF",		label=a0000000007,		shape=ellipse,		style=filled];	a0000000017	[color=green,		label=a0000000017,		shape=ellipse];	a0000000021	[color=green,		label=a0000000021,		shape=ellipse];	a0000000006	[color=green,		fillcolor="#B0ECA3",		label=a0000000006,		shape=box,		style=filled];	a0000000016	[color=green,		label=a0000000016,		shape=ellipse];	a0000000018	[color=green,		label=a0000000018,		shape=ellipse];	a0000000019	[color=green,		label=a0000000019,		shape=ellipse];	a0000000023	[color=green,		label=a0000000023,		shape=ellipse];	"prop:posp_negp"	[color=green,		fillcolor="#A3D6FF",		label=posp_negp,		shape=ellipse,		style=filled];}`)
+    .on("end", interactive);
+
+latexLabelEscaper = function(label) {
+  return label.replace(/\./g, '\\.').replace(/:/g, '\\:')
+}
+
+clickNode = function() {
+  $("#statements div").hide()
+  var node_id = $('text', this).text();
+  $('.thm').hide();
+  $('#'+latexLabelEscaper(node_id)).show().children().show();
+}
+function interactive() {
+    $("span#legend_title").on("click", function () {
+           $(this).siblings('dl').toggle();
+        })
+
+    d3.selectAll('.node')
+        .attr('pointer-events', 'fill')
+        .on('click', function () {
+           var title = d3.select(this).selectAll('title').text().trim();
+           $('#statements > div').hide()
+           $('.thm').hide();
+           $('#'+latexLabelEscaper(title)+'_modal').show().children().show().children().show();
+           $('#statements').show()
+        });
+
+    d3.selectAll('.dep-closebtn').on('click', function() {
+        var modal =
+            d3.select(this).node().parentNode.parentNode.parentNode ;
+        d3.select(modal).style('display', 'none');
+    });
+}
+
+</script>
+
+</body>
+</html>
