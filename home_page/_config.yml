@@ -28,7 +28,7 @@ github_username: davidmunozlahoz
 repository: davidmunozlahoz/veclat
 
 # Build settings
-remote_theme: pages-themes/hacker 
+remote_theme: pages-themes/cayman
 plugins:
   - jekyll-remote-theme
   - jekyll-github-metadata
