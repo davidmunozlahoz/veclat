@@ -3,14 +3,13 @@ posp
 negp
 nonneg_smul_sup
 nonneg_smul_inf
-posp_sub_neg
-posp_add_neg
+posp_sub_negp
+posp_add_negp
 leq_posp_negp
 sup_of_dis_eq_sum
 uniqueness_posp
 abs_eq_zero_iff_zero
 abs_smul'
-Mathlib.Algebra.Order.Group.Unbundled.Abs
 sub_inf_posp_sub
 Riesz_decomposition
 arch'
