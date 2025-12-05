@@ -4,9 +4,9 @@ universe u
 
 variable {X : Type u} [VectorLattice X]
 
-def PrincipalOrderIdeal (a : X) := {x : X | ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • a}
+def PrincipalIdeal (a : X) := {x : X | ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • a}
 
-namespace PrincipalOrderIdeal
+namespace PrincipalIdeal
 
 variable (a : X)
 
@@ -44,7 +44,7 @@ instance instVectorSublattice : VectorSublattice X :=
     · rw [abs_abs x]
       exact hs.2)
 
-instance instOrderIdeal : VectorOrderIdeal X := { instVectorSublattice a with
+instance instVectorOrderIdeal : VectorOrderIdeal X := { instVectorSublattice a with
     solid := by
       rintro x y hxy ⟨s, hs⟩
       use s
@@ -54,10 +54,10 @@ instance instOrderIdeal : VectorOrderIdeal X := { instVectorSublattice a with
           |x| ≤ |y| := hxy
           _ ≤ s • a := hs.2 }
 
-instance instVectorLattice : VectorLattice (PrincipalOrderIdeal a) :=
+instance instVectorLattice : VectorLattice (PrincipalIdeal a) :=
   (inferInstance : VectorLattice (instVectorSublattice a))
 
-def gen_mem {apos : 0 ≤ a} : a ∈ PrincipalOrderIdeal a := by
+def gen_mem {apos : 0 ≤ a} : a ∈ PrincipalIdeal a := by
   use 1
   constructor
   · exact zero_le_one
@@ -71,7 +71,7 @@ variable {apos : 0 ≤ a}
 
 def S (a x : X) := { s : ℝ | 0 ≤ s ∧ |x| ≤ s • a }
 
-lemma S_nonempty (xmem : x ∈ PrincipalOrderIdeal a) : (S a x).Nonempty := by
+lemma S_nonempty (xmem : x ∈ PrincipalIdeal a) : (S a x).Nonempty := by
   obtain ⟨s, hs⟩ := xmem
   use s
   exact hs
@@ -93,7 +93,7 @@ lemma norm_nonneg (x : X) : 0 ≤ norm a x := by
     exact hs.1
   · simp
 
-lemma gt_norm (apos : 0 ≤ a) (x : X) (t : ℝ) (xmem : x ∈ PrincipalOrderIdeal a)
+lemma gt_norm (apos : 0 ≤ a) (x : X) (t : ℝ) (xmem : x ∈ PrincipalIdeal a)
   (h : norm a x < t) : |x| ≤ t • a := by
   rw [norm_def] at h
   rw [csInf_lt_iff (S_bddbelow a) (S_nonempty a xmem)] at h
@@ -104,7 +104,7 @@ lemma gt_norm (apos : 0 ≤ a) (x : X) (t : ℝ) (xmem : x ∈ PrincipalOrderIde
 
 variable [Archimedean X]
 
-lemma norm_attained (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) : |x| ≤ (norm a x) • a := by
+lemma norm_attained (apos : 0 ≤ a) (xmem : x ∈ PrincipalIdeal a) : |x| ≤ (norm a x) • a := by
   have h : ∀ t : ℝ, 0 < t → |x| ≤ ((norm a x) + t) • a := by
     intro t ht
     exact gt_norm a apos x ((norm a x) + t) xmem (by norm_num [ht])
@@ -140,7 +140,7 @@ lemma norm_attained (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) : |x| 
   simp
   exact this
 
-lemma norm_zero_iff_zero (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) :
+lemma norm_zero_iff_zero (apos : 0 ≤ a) (xmem : x ∈ PrincipalIdeal a) :
     norm a x = 0 ↔ x = 0 := by
   constructor
   · intro h
@@ -159,12 +159,12 @@ lemma norm_zero_iff_zero (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) :
       apply csInf_le (S_bddbelow a) hc
     · exact norm_nonneg a x
 
-lemma norm_smul (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) (r : ℝ) :
+lemma norm_smul (apos : 0 ≤ a) (xmem : x ∈ PrincipalIdeal a) (r : ℝ) :
       norm a (r•x) = |r| • (norm a x) := by
         sorry
 
 lemma norm_add (apos : 0 ≤ a)
-      (xmem : x ∈ PrincipalOrderIdeal a) (ymem : y ∈ PrincipalOrderIdeal a) :
+      (xmem : x ∈ PrincipalIdeal a) (ymem : y ∈ PrincipalIdeal a) :
       norm a (x + y) ≤ norm a x + norm a y := by
   have : norm a x + norm a y ∈ S a (x + y) := by
     constructor
@@ -176,7 +176,7 @@ lemma norm_add (apos : 0 ≤ a)
               _ = (norm a x + norm a y) • a := by rw [add_smul]
   exact csInf_le (S_bddbelow a) this
 
-lemma norm_le (apos : 0 ≤ a) (ymem : y ∈ PrincipalOrderIdeal a)
+lemma norm_le (apos : 0 ≤ a) (ymem : y ∈ PrincipalIdeal a)
       (hxy : |x| ≤ |y|) : norm a x ≤ norm a y := by
   have : norm a y ∈ S a x := by
     constructor
@@ -186,7 +186,7 @@ lemma norm_le (apos : 0 ≤ a) (ymem : y ∈ PrincipalOrderIdeal a)
   exact csInf_le (S_bddbelow a) this
 
 lemma AMnorm (apos : 0 ≤ a) (xpos : 0 ≤ x) (ypos : 0 ≤ y)
-      (xmem : x ∈ PrincipalOrderIdeal a) (ymem : y ∈ PrincipalOrderIdeal a) :
+      (xmem : x ∈ PrincipalIdeal a) (ymem : y ∈ PrincipalIdeal a) :
       norm a (x ⊔ y) = (norm a x) ⊔ (norm a y) := by
       have sup_eq_abs : |x ⊔ y| = x ⊔ y := by
         apply abs_of_nonneg
@@ -234,4 +234,4 @@ lemma AMnorm (apos : 0 ≤ a) (xpos : 0 ≤ x) (ypos : 0 ≤ y)
 
 end
 
-end PrincipalOrderIdeal
+end PrincipalIdeal
