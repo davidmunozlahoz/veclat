@@ -125,9 +125,9 @@ attribute [simp] abs
 /- Mathlib.Algebra.Order.Module.Basic.abs_smul is the same but only for -/
 /- linear orders. I don't know if using a prime is the proper solution.-/
 
-#check abs_eq_zero
-#check abs_smul
-#check abs_add_le
+/- #check abs_eq_zero -/
+/- #check abs_smul -/
+/- #check abs_add_le -/
 
 lemma abs_eq_zero_iff_zero {x : X} : abs x = 0 ↔ x = 0 := by
   constructor
