@@ -35,7 +35,7 @@ instance instSubmodule : Submodule ℝ X where
       _ ≤ |r| • (s • a) := smul_le_smul_of_nonneg_left hs.2 (abs_nonneg r)
       _ = (|r| * s) • a := by rw [mul_smul]
 
-instance instSublattice : VectorSublattice X :=
+instance instVectorSublattice : VectorSublattice X :=
   VectorSublattice.ofSubmoduleAbs (instSubmodule a) (by
     rintro x ⟨s, hs⟩
     use s
@@ -44,7 +44,7 @@ instance instSublattice : VectorSublattice X :=
     · rw [abs_abs x]
       exact hs.2)
 
-instance instOrderIdeal : VectorOrderIdeal X := { instSublattice a with
+instance instOrderIdeal : VectorOrderIdeal X := { instVectorSublattice a with
     solid := by
       rintro x y hxy ⟨s, hs⟩
       use s
@@ -55,8 +55,7 @@ instance instOrderIdeal : VectorOrderIdeal X := { instSublattice a with
           _ ≤ s • a := hs.2 }
 
 instance instVectorLattice : VectorLattice (PrincipalOrderIdeal a) :=
-  (inferInstance : VectorLattice (instSublattice a))
-
+  (inferInstance : VectorLattice (instVectorSublattice a))
 
 def gen_mem {apos : 0 ≤ a} : a ∈ PrincipalOrderIdeal a := by
   use 1
@@ -109,7 +108,6 @@ lemma norm_attained (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) : |x| 
   have h : ∀ t : ℝ, 0 < t → |x| ≤ ((norm a x) + t) • a := by
     intro t ht
     exact gt_norm a apos x ((norm a x) + t) xmem (by norm_num [ht])
-
   have h' : ∀ t : ℝ, 0 ≤ t →  t • (|x| - (norm a x) • a) ≤ a := by
     intro t ht
     by_cases ht' : t = 0
@@ -130,16 +128,13 @@ lemma norm_attained (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) : |x| 
         t • (|x| - (norm a x) • a) ≤ t • (t⁻¹ • a) := by
                 apply smul_le_smul_of_nonneg_left this ht
             _ = a := by rw [← smul_assoc]; simp [ht']
-
   have hnat : ∀ n : ℕ, n • (|x| - (norm a x) • a) ≤ a := by
     intro n
     calc
       n • (|x| - (norm a x) • a) = (n:ℝ) • (|x| - (norm a x) • a) :=
         by apply Eq.symm ( Nat.cast_smul_eq_nsmul ℝ n (|x| - norm a x • a) )
         _ ≤ a := by apply h' (n:ℝ) (Nat.cast_nonneg n)
-
   have : |x| - (norm a x) • a ≤ 0 := arch' hnat
-
   have : _ := add_le_add_right this ((norm a x) • a)
   simp at this
   simp
@@ -164,8 +159,9 @@ lemma norm_zero_iff_zero (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) :
       apply csInf_le (S_bddbelow a) hc
     · exact norm_nonneg a x
 
-/- lemma norm_smul (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) (r : ℝ) : -/
-/-       norm a (r•x) = |r| • (norm a x) := by sorry -/
+lemma norm_smul (apos : 0 ≤ a) (xmem : x ∈ PrincipalOrderIdeal a) (r : ℝ) :
+      norm a (r•x) = |r| • (norm a x) := by
+        sorry
 
 lemma norm_add (apos : 0 ≤ a)
       (xmem : x ∈ PrincipalOrderIdeal a) (ymem : y ∈ PrincipalOrderIdeal a) :
@@ -179,6 +175,62 @@ lemma norm_add (apos : 0 ≤ a)
               by exact add_le_add (norm_attained a apos xmem) (norm_attained a apos ymem)
               _ = (norm a x + norm a y) • a := by rw [add_smul]
   exact csInf_le (S_bddbelow a) this
+
+lemma norm_le (apos : 0 ≤ a) (ymem : y ∈ PrincipalOrderIdeal a)
+      (hxy : |x| ≤ |y|) : norm a x ≤ norm a y := by
+  have : norm a y ∈ S a x := by
+    constructor
+    · exact norm_nonneg a y
+    · apply le_trans hxy
+      exact norm_attained a apos ymem
+  exact csInf_le (S_bddbelow a) this
+
+lemma AMnorm (apos : 0 ≤ a) (xpos : 0 ≤ x) (ypos : 0 ≤ y)
+      (xmem : x ∈ PrincipalOrderIdeal a) (ymem : y ∈ PrincipalOrderIdeal a) :
+      norm a (x ⊔ y) = (norm a x) ⊔ (norm a y) := by
+      have sup_eq_abs : |x ⊔ y| = x ⊔ y := by
+        apply abs_of_nonneg
+        apply le_sup_of_le_left
+        exact xpos
+      apply le_antisymm
+      · have : max (norm a x) (norm a y) ∈ S a (x ⊔ y) := by
+          constructor
+          · rw [le_max_iff]
+            constructor
+            exact norm_nonneg a x
+          · calc
+              |x ⊔ y| = x ⊔ y := by exact sup_eq_abs
+                    _ = |x| ⊔ |y| := by
+                      congr; · symm; · exact abs_of_nonneg xpos
+                      symm; exact abs_of_nonneg ypos
+                    _ ≤ (norm a x)•a ⊔ |y| := by
+                      apply sup_le_sup_right (norm_attained a apos xmem) |y|
+                    _ ≤ (norm a x)•a ⊔ (norm a y)•a := by
+                      apply sup_le_sup_left
+                            (norm_attained a apos ymem)
+                            ((norm a x)•a)
+                    _ ≤ ((norm a x) ⊔ (norm a y))•a := by
+                      apply sup_le
+                      · apply smul_le_smul_of_nonneg_right
+                        · exact le_max_left (norm a x) (norm a y)
+                        · exact apos
+                      · apply smul_le_smul_of_nonneg_right
+                        · exact le_max_right (norm a x) (norm a y)
+                        · exact apos
+        exact csInf_le (S_bddbelow a) this
+      · have hx : |x| ≤ |x ⊔ y| := by
+          calc
+            |x| = x := by exact abs_of_nonneg xpos
+              _ ≤ x ⊔ y := by exact le_sup_left
+              _ = |x ⊔ y| := by symm; exact sup_eq_abs
+        have hy : |y| ≤ |x ⊔ y| := by
+          calc
+            |y| = y := by exact abs_of_nonneg ypos
+              _ ≤ x ⊔ y := by exact le_sup_right
+              _ = |x ⊔ y| := by symm; exact sup_eq_abs
+        apply max_le
+        · exact norm_le a apos ((instVectorSublattice a).sup_mem xmem ymem) hx
+        · exact norm_le a apos ((instVectorSublattice a).sup_mem xmem ymem) hy
 
 end
 
