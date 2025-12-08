@@ -1,4 +1,5 @@
 import VecLat.Basic
+import VecLat.VectorOrderIdeal
 
 variable (X : Type*) (Y : Type*) [VectorLattice X] [VectorLattice Y]
 
@@ -37,6 +38,11 @@ theorem toFun_eq_coe {f : VecLatHom X Y} : f.toFun = (f : X → Y) := rfl
 
 lemma map_abs (f : VecLatHom X Y) (x : X) : f |x| = |f x| := by simp
 
+lemma monotone (f : VecLatHom X Y) : Monotone f := by
+  intro x y hxy
+  have : x ⊔ y = y := by simp [hxy]
+  rw [← sup_eq_right, ← map_sup f x y, this]
+
 def of_abs (f : X →ₗ[ℝ] Y) (abs : ∀ x : X, f |x| = |f x|) : VecLatHom X Y :=
   {f with
       map_sup' := by
@@ -62,5 +68,27 @@ def of_abs (f : X →ₗ[ℝ] Y) (abs : ∀ x : X, f |x| = |f x|) : VecLatHom X 
         congr
         exact f.map_sub y x
     }
+
+def ker (f : VecLatHom X Y) : VectorOrderIdeal X :=
+  {LinearMap.ker f with
+    supClosed' := by
+      intro x xmem y ymem
+      simp_all
+    infClosed' := by
+      intro x xmem y ymem
+      simp_all
+    solid := by
+      intro x y hxy ymem
+      simp
+      simp at ymem
+      rw [← abs_eq_zero_iff_zero]
+      apply le_antisymm
+      · calc
+          |f x| = f |x| := by simp
+              _ ≤ f |y| := by apply (f.monotone X Y) hxy
+              _ = |f y| := by simp
+              _ = 0     := by simp [ymem]
+      · exact abs_nonneg _
+  }
 
 end VecLatHom
