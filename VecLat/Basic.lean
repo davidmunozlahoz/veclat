@@ -5,14 +5,11 @@ import Mathlib.Tactic
 
 set_option linter.unusedSectionVars false
 
-class VectorLattice (X : Type*) extends
-  AddCommGroup X,
-  Lattice X,
-  IsOrderedAddMonoid X,
+class VectorLattice (X : Type*) [AddCommGroup X] [Lattice X] [AddLeftMono X] extends
   Module ℝ X,
-  IsOrderedModule ℝ X
+  PosSMulMono ℝ X
 
-variable {X : Type*} [VectorLattice X]
+variable {X : Type*} [AddCommGroup X] [Lattice X] [AddLeftMono X] [VectorLattice X]
 
 @[simp]
 def posp (x : X) := x ⊔ 0
