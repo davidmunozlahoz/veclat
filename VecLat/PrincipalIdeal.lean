@@ -2,7 +2,8 @@ import VecLat.VectorOrderIdeal
 
 universe u
 
-variable {X : Type u} [VectorLattice X]
+variable {X : Type u} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
+  [VectorLattice X]
 
 def PrincipalIdeal (a : X) := {x : X | ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • a}
 
@@ -53,9 +54,6 @@ instance instVectorOrderIdeal : VectorOrderIdeal X := { instVectorSublattice a w
       · calc
           |x| ≤ |y| := hxy
           _ ≤ s • a := hs.2 }
-
-instance instVectorLattice : VectorLattice (PrincipalIdeal a) :=
-  (inferInstance : VectorLattice (instVectorSublattice a))
 
 def gen_mem {apos : 0 ≤ a} : a ∈ PrincipalIdeal a := by
   use 1

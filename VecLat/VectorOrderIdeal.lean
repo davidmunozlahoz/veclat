@@ -2,10 +2,12 @@ import VecLat.Basic
 
 universe u
 
-variable {X : Type u} [VectorLattice X]
+variable {X : Type u} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [VectorLattice X]
 
-structure VectorSublattice (X : Type u) [VectorLattice X] : Type u
-  extends Submodule ℝ X, Sublattice X
+structure VectorSublattice (X : Type u) [AddCommGroup X] [Lattice X]
+  [IsOrderedAddMonoid X] [VectorLattice X] : Type u extends
+  Submodule ℝ X,
+  Sublattice X
 
 namespace VectorSublattice
 
@@ -17,18 +19,17 @@ instance instSetLike : SetLike (VectorSublattice X) X where
 instance instAddCommGroup (Y : VectorSublattice X) : AddCommGroup Y :=
   Y.toAddSubgroup.toAddCommGroup
 
+instance instLattice (Y : VectorSublattice X) : Lattice Y :=
+  Y.instLatticeCoe
+
+instance instIsOrderedAddMonoid (Y : VectorSublattice X) : IsOrderedAddMonoid Y where
+  add_le_add_left := by
+    intro x y hxy c
+    exact @add_le_add_left X _ _ _ x y hxy c
+
 instance instVectorLattice (Y : VectorSublattice X) : VectorLattice Y :=
   {
-  toAddCommGroup := inferInstance
-  toLattice := Y.instLatticeCoe
   toModule := Y.module
-  add_le_add_left := by
-    intros a b h c
-    have : (a:X) ≤ (b:X) := h
-    calc
-      a + c = ↑ a + ↑ c := by simp
-          _ ≤ ↑ b + ↑ c := by apply add_le_add_left this ↑c
-          _ = b + c := by simp
   smul_le_smul_of_nonneg_left := by
     intros a ha b b' hbs
     have : (b:X) ≤ (b':X) := hbs
@@ -36,12 +37,6 @@ instance instVectorLattice (Y : VectorSublattice X) : VectorLattice Y :=
       a • b = a • (b:X) := by simp
           _ ≤ a • (b':X) := by exact smul_le_smul_of_nonneg_left this ha
           _ = a • b' := by simp
-  smul_le_smul_of_nonneg_right := by
-    intros b hb a a' has
-    calc
-      a • b = a • (b:X) := by simp
-          _ ≤ a' • (b:X) := by exact smul_le_smul_of_nonneg_right has hb
-          _ = a' • b := by simp
   }
 
 lemma abs_mem {Y : VectorSublattice X} {x : X} (h : x ∈ Y) : |x| ∈ Y := by
@@ -75,7 +70,8 @@ def ofSubmoduleAbs (s : Submodule ℝ X) (h : ∀ x ∈ s, |x| ∈ s) :
 
 end VectorSublattice
 
-structure VectorOrderIdeal (X : Type u) [VectorLattice X] : Type u
+structure VectorOrderIdeal (X : Type u) [AddCommGroup X] [Lattice X]
+  [IsOrderedAddMonoid X] [VectorLattice X] : Type u
   extends VectorSublattice X where
   solid : ∀ {x y : X}, |x| ≤ |y| → y ∈ carrier → x ∈ carrier
 

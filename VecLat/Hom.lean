@@ -1,7 +1,9 @@
 import VecLat.Basic
 import VecLat.VectorOrderIdeal
 
-variable (X : Type*) (Y : Type*) [VectorLattice X] [VectorLattice Y]
+variable (X : Type*) (Y : Type*) [AddCommGroup X] [AddCommGroup Y]
+  [Lattice X] [Lattice Y] [IsOrderedAddMonoid X] [IsOrderedAddMonoid Y]
+  [VectorLattice X] [VectorLattice Y]
 
 structure VecLatHom extends X →ₗ[ℝ] Y, LatticeHom X Y
 
