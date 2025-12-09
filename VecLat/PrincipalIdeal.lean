@@ -55,6 +55,18 @@ instance instVectorOrderIdeal : VectorOrderIdeal X := { instVectorSublattice a w
           |x| ≤ |y| := hxy
           _ ≤ s • a := hs.2 }
 
+instance instAddCommGroup : AddCommGroup (PrincipalIdeal a) :=
+  (inferInstance : AddCommGroup (instVectorSublattice a))
+
+instance instLattice : Lattice (PrincipalIdeal a) :=
+  (inferInstance : Lattice (instVectorSublattice a))
+
+instance instIsOrderedAddMonoid : IsOrderedAddMonoid (PrincipalIdeal a) :=
+  (inferInstance : IsOrderedAddMonoid (instVectorSublattice a))
+
+instance instVectorLattice : VectorLattice (PrincipalIdeal a) :=
+  (inferInstance : VectorLattice (instVectorSublattice a))
+
 def gen_mem {apos : 0 ≤ a} : a ∈ PrincipalIdeal a := by
   use 1
   constructor
