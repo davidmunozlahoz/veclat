@@ -8,6 +8,10 @@ structure VecLatHom extends X →ₗ[ℝ] Y, LatticeHom X Y
 
 namespace VecLatHom
 
+variable {X : Type*} {Y : Type*} [AddCommGroup X] [AddCommGroup Y]
+  [Lattice X] [Lattice Y] [IsOrderedAddMonoid X] [IsOrderedAddMonoid Y]
+  [VectorLattice X] [VectorLattice Y]
+
 instance instFunLike : FunLike (VecLatHom X Y) X Y where
   coe f := f.toFun
   coe_injective' f g h := by

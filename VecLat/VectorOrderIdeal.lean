@@ -137,9 +137,9 @@ def comap (f : VecLatHom X Y) (Z : VectorOrderIdeal Y) :
       simp
       have : |f x| ≤ |f y| := by
         calc
-          |f x| = f |x| := by rw [← f.map_abs X Y x]
-              _ ≤ f |y| := by exact (f.monotone X Y) hxy
-              _ = |f y| := by rw [f.map_abs X Y y]
+          |f x| = f |x| := by rw [← f.map_abs x]
+              _ ≤ f |y| := by exact f.monotone hxy
+              _ = |f y| := by rw [f.map_abs y]
       exact Z.solid this ymem
   }
 /- def ker (f : VecLatHom X Y) : VectorOrderIdeal X := -/
