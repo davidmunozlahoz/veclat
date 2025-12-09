@@ -233,3 +233,8 @@ lemma arch' {x y : X} (h : ∀ n : ℕ, n • x ≤ y) : x ≤ 0 := by
     rw [xpos_zero]
     simp
   · simp
+
+noncomputable instance : VectorLattice ℝ := {
+  toModule := inferInstance
+  toPosSMulMono := inferInstance
+}
