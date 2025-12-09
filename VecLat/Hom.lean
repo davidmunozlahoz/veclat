@@ -6,11 +6,15 @@ variable (X : Type*) (Y : Type*) [AddCommGroup X] [AddCommGroup Y]
 
 structure VecLatHom extends X →ₗ[ℝ] Y, LatticeHom X Y
 
-namespace VecLatHom
-
 variable {X : Type*} {Y : Type*} [AddCommGroup X] [AddCommGroup Y]
   [Lattice X] [Lattice Y] [IsOrderedAddMonoid X] [IsOrderedAddMonoid Y]
   [VectorLattice X] [VectorLattice Y]
+
+structure IsVecLatHom (f : X → Y) extends IsLinearMap ℝ f where
+  map_sup' : ∀ x y : X, f (x ⊔ y) = (f x) ⊔ (f y)
+  map_inf' : ∀ x y : X, f (x ⊓ y) = (f x) ⊓ (f y)
+
+namespace VecLatHom
 
 instance instFunLike : FunLike (VecLatHom X Y) X Y where
   coe f := f.toFun
@@ -20,6 +24,12 @@ instance instFunLike : FunLike (VecLatHom X Y) X Y where
     cases g
     congr
     exact LinearMap.ext_iff.mpr (congrFun h)
+
+theorem isVecLatHom (f : VecLatHom X Y) : IsVecLatHom f where
+  map_add := f.toLinearMap.map_add
+  map_smul := f.toLinearMap.map_smul
+  map_sup' := f.toLatticeHom.map_sup'
+  map_inf' := f.toLatticeHom.map_inf'
 
 instance instLatticeHomClass : LatticeHomClass (VecLatHom X Y) X Y where
   map_inf := by
