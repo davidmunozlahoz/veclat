@@ -1,5 +1,4 @@
 import VecLat.Basic
-import VecLat.VectorOrderIdeal
 
 variable (X : Type*) (Y : Type*) [AddCommGroup X] [AddCommGroup Y]
   [Lattice X] [Lattice Y] [IsOrderedAddMonoid X] [IsOrderedAddMonoid Y]
@@ -70,27 +69,5 @@ def of_abs (f : X →ₗ[ℝ] Y) (abs : ∀ x : X, f |x| = |f x|) : VecLatHom X 
         congr
         exact f.map_sub y x
     }
-
-def ker (f : VecLatHom X Y) : VectorOrderIdeal X :=
-  {LinearMap.ker f with
-    supClosed' := by
-      intro x xmem y ymem
-      simp_all
-    infClosed' := by
-      intro x xmem y ymem
-      simp_all
-    solid := by
-      intro x y hxy ymem
-      simp
-      simp at ymem
-      rw [← abs_eq_zero_iff_zero]
-      apply le_antisymm
-      · calc
-          |f x| = f |x| := by simp
-              _ ≤ f |y| := by apply (f.monotone X Y) hxy
-              _ = |f y| := by simp
-              _ = 0     := by simp [ymem]
-      · exact abs_nonneg _
-  }
 
 end VecLatHom

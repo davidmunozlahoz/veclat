@@ -172,6 +172,12 @@ lemma sub_inf_posp_sub (x y : X) : x - x ⊓ y = posp (x-y) := by
             _ = 0 ⊔ (x-y) := by rw [add_sup]; simp [sub_eq_add_neg]
             _ = posp (x-y) := by simp; rw [sup_comm]
 
+lemma sup_sub_posp_sub (x y : X) : x ⊔ y - x = posp (y-x) := by
+  calc
+    x ⊔ y - x = (x - x) ⊔ (y - x) := by rw [sup_sub x y x]
+            _ = 0 ⊔ (y - x) := by simp
+            _ = posp (y - x) := by simp; exact sup_comm 0 (y - x)
+
 theorem Riesz_decomposition {x y z : X} (xpos : 0 ≤ x) (ypos : 0 ≤ y)
   (zpos : 0 ≤ z) (h : x ≤ y + z) : ∃ x1 x2 : X, (0 ≤ x1) ∧ (x1 ≤ y) ∧
   (0 ≤ x2) ∧ (x2 ≤ z) ∧ (x = x1 + x2) := by
