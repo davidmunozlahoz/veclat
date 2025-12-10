@@ -2,27 +2,25 @@ import VecLat.Basic
 
 set_option linter.unusedSectionVars false
 
-class UnitalAMSpace (X : Type*) (e : X) [AddCommGroup X] [Lattice X]
-  [IsOrderedAddMonoid X] [VectorLattice X] : Prop where
+class IsUnitalAMSpace (X : Type*) (e : outParam X) [AddCommGroup X] [Lattice X]
+  [IsOrderedAddMonoid X] [VectorLattice X] where
   pos : 0 ≤ e
-  unit : ∀ x : X, ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • e
+  unit (x : X) : ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • e
 
 namespace UnitalAMSpace
 
 variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
-  [VectorLattice X] (e : X) [UnitalAMSpace X e]
+  [VectorLattice X] (e : X) [IsUnitalAMSpace X e]
 
-variable (x : X)
+lemma unit_pos : 0 ≤ e := IsUnitalAMSpace.pos
+
+lemma unit_def (x : X) : ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • e := IsUnitalAMSpace.unit x
 
 noncomputable section
 
-theorem unit_def : ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • e := by
-  exact UnitalAMSpace.unit x
+def S (x : X) := { s : ℝ | 0 ≤ s ∧ |x| ≤ s • e }
 
-theorem unit_pos : 0 ≤ e := by
-  exact UnitalAMSpace.pos
-
-def S := { s : ℝ | 0 ≤ s ∧ |x| ≤ s • e }
+variable (x : X)
 
 lemma S_nonempty : (S e x).Nonempty := by
   obtain ⟨s, hs⟩ := unit_def e x
@@ -57,6 +55,8 @@ lemma gt_norm (t : ℝ) (h : norm e x < t) : |x| ≤ t • e := by
 end
 
 variable [Archimedean X]
+
+variable (x : X)
 
 lemma norm_attained : |x| ≤ (norm e x) • e := by
   have h : ∀ t : ℝ, 0 < t → |x| ≤ ((norm e x) + t) • e := by
@@ -126,13 +126,21 @@ lemma norm_add (y : X) : norm e (x + y) ≤ norm e x + norm e y := by
               _ = (norm e x + norm e y) • e := by rw [add_smul]
   exact csInf_le (S_bddbelow e (x+y)) this
 
-lemma norm_le (y : X) (hxy : |x| ≤ |y|) : norm e x ≤ norm e y := by
+lemma abs_le_abs_norm (y : X) (hxy : |x| ≤ |y|) :
+    norm e x ≤ norm e y := by
   have : norm e y ∈ S e x := by
     constructor
     · exact norm_nonneg e y
     · apply le_trans hxy
       exact norm_attained e y
   exact csInf_le (S_bddbelow e x) this
+
+lemma norm_eq_norm_abs : norm e x = norm e |x| := by
+  have : abs |x| ≤ |x| := by
+      rw [abs_of_nonneg (abs_nonneg x)]
+  apply le_antisymm
+  · exact abs_le_abs_norm e x |x| (le_abs_self |x|)
+  · exact abs_le_abs_norm e |x| x this
 
 lemma AMnorm (y : X) (xpos : 0 ≤ x) (ypos : 0 ≤ y) :
       norm e (x ⊔ y) = (norm e x) ⊔ (norm e y) := by
@@ -177,11 +185,37 @@ lemma AMnorm (y : X) (xpos : 0 ≤ x) (ypos : 0 ≤ y) :
               _ ≤ x ⊔ y := by exact le_sup_right
               _ = |x ⊔ y| := by symm; exact sup_eq_abs
         apply max_le
-        · exact norm_le e x (x ⊔ y) hx
-        · exact norm_le e y (x ⊔ y) hy
+        · exact abs_le_abs_norm e x (x ⊔ y) hx
+        · exact abs_le_abs_norm e y (x ⊔ y) hy
 
-instance instSeminormedAddCommGroup : SeminormedAddCommGroup X := sorry
+noncomputable section
 
-instance instNormedSpace : NormedSpace ℝ X := sorry
+instance instNormedAddCommGroup : NormedAddCommGroup X where
+  norm := norm e
+  dist_self := by
+    intro x
+    rw [sub_self, norm_zero_iff_zero e 0]
+  eq_of_dist_eq_zero := by
+    intro x y h
+    rw [norm_zero_iff_zero e (x-y)] at h
+    rw [← sub_eq_zero]
+    exact h
+  dist_comm := by
+    intro x y
+    rw [norm_eq_norm_abs e (x-y), norm_eq_norm_abs e (y-x)]
+    rw [abs_sub_comm]
+  dist_triangle := by
+    intro x y z
+    have : x - z = (x - y) + (y - z) := by simp
+    rw [this]
+    exact norm_add e (x - y) (y - z)
+
+instance instNormedSpace : NormedSpace ℝ X where
+  norm_smul_le := by
+    intro t x
+    apply le_of_eq
+    exact norm_smul e x t
+
+end
 
 end UnitalAMSpace
