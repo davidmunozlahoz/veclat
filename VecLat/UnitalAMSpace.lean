@@ -216,6 +216,8 @@ instance instNormedSpace : NormedSpace ℝ X where
     apply le_of_eq
     exact norm_smul e x t
 
+instance instTopologicalSpace : TopologicalSpace X := inferInstance
+
 end
 
 end UnitalAMSpace
