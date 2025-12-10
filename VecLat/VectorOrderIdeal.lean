@@ -17,6 +17,10 @@ instance instSetLike : SetLike (VectorSublattice X) X where
   coe_injective' s t h := by
     cases s; cases t; congr; exact SetLike.coe_injective' h
 
+@[ext]
+theorem ext {s t : VectorSublattice X} (h : ∀ x, x ∈ s ↔ x ∈ t) : s = t :=
+  SetLike.ext h
+
 instance instAddCommGroup (Y : VectorSublattice X) : AddCommGroup Y :=
   Y.toAddSubgroup.toAddCommGroup
 
@@ -99,6 +103,10 @@ instance instSetLike : SetLike (VectorOrderIdeal X) X where
   coe s := s.carrier
   coe_injective' s t h := by
     cases s; cases t; congr; exact SetLike.coe_injective' h
+
+@[ext]
+theorem ext {s t : VectorOrderIdeal X} (h : ∀ x, x ∈ s ↔ x ∈ t) : s = t :=
+  SetLike.ext h
 
 lemma mem_iff_abs_mem {I : VectorOrderIdeal X} {x : X} : x ∈ I ↔ |x| ∈ I := by
   constructor

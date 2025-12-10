@@ -3,16 +3,12 @@ import VecLat.CofK
 
 open UnitalAMSpace Character
 
-variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
-[VectorLattice X] [Archimedean X] {e : X} [IsUnitalAMSpace X e]
+variable (X : Type*) [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
+[VectorLattice X] [Archimedean X] (e : X) [IsUnitalAMSpace X e]
 
-namespace Kakutani
-
-def T (x : X) : C(Characters e, ℝ) where
+def KT (x : X) : C(Characters e, ℝ) where
   toFun := fun φ => (φ : X → ℝ) x
   continuous_toFun := sorry
 
-theorem Kakutani : (IsVecLatHom T) ∧ (∀ x : X, ‖x‖=‖T x‖) ∧ (Dense
-  (Set.range T)) ∧ (T e = 1) := sorry
-
-end Kakutani
+theorem Kakutani : (IsVecLatHom (KT X e)) ∧ (∀ x : X, ‖x‖=‖KT X e x‖) ∧ (Dense
+  (Set.range (KT X e))) ∧ (KT X e e = 1) := sorry
