@@ -84,7 +84,7 @@ instance instLattice : Lattice (X ⧸ I) where
     constructor
     · simp
     · rw [← hx, ← hy, ← Submodule.mkQ_apply,
-          ← Submodule.mkQ_apply, ← mkQ_map_sup ]
+          ← Submodule.mkQ_apply, ← mkQ_map_sup]
       simp
   le_sup_right := by
     intro a b
@@ -120,5 +120,11 @@ instance instVectorLattice : VectorLattice (X ⧸ I) where
     · exact smul_nonneg tpos xpos
     · simp [hxab]
       exact smul_sub t b a
+
+def mkQ : VecLatHom X (X ⧸ I) := {
+  I.mkQ with
+    map_sup' := by sorry
+    map_inf' := by sorry
+  }
 
 end Quotient

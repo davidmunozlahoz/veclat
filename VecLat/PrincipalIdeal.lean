@@ -1,6 +1,7 @@
 import VecLat.Basic
 import VecLat.VectorOrderIdeal
 import VecLat.UnitalAMSpace
+import VecLat.Lattice
 
 universe u
 
@@ -76,6 +77,11 @@ lemma gen_mem (apos : 0 ≤ a) : a ∈ PrincipalIdeal a := by
   · rw [one_smul]
     rw [abs_of_nonneg apos]
 
+lemma disjoint_not_mem (h : a₊ ∈ PrincipalIdeal (a₋)) : a₊ = 0 := by
+  /- use and prove disjoint_smul -/
+  sorry
+
+lemma bot_iff_zero : PrincipalIdeal a = (⊥ : VectorOrderIdeal X) ↔ a = 0 := by sorry
 /- def gen_type (apos : 0 ≤ a) : PrincipalIdeal a := ⟨a, gen_mem a apos⟩ -/
 /- TO DO: show that every PrincipalIdeal a is an instance of
    IsUnitalAMSpace -/

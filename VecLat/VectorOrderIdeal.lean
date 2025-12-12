@@ -150,6 +150,12 @@ def comap (f : VecLatHom X Y) (Z : VectorOrderIdeal Y) :
               _ = |f y| := by rw [f.map_abs y]
       exact Z.solid this ymem
   }
+
+lemma mem_comap (f : VecLatHom X Y) (Z : VectorOrderIdeal Y) (x : X) :
+    x ∈ comap f Z ↔ f x ∈ Z := by
+  simp only [comap]
+  rfl
+
 /- def ker (f : VecLatHom X Y) : VectorOrderIdeal X := -/
 /-   {LinearMap.ker f with -/
 /-     supClosed' := by -/

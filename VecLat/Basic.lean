@@ -20,7 +20,9 @@ def negp (x : X) := (-x) ⊔ 0
 notation x "₊" => posp x
 notation x "₋" => negp x
 
-lemma posp_nonneg (x : X) : x₊ ≥ 0 := by simp
+lemma posp_nonneg (x : X) : x₊ ≥ 0 := by
+  rw [posp]
+  exact le_sup_right
 
 lemma nonneg_eq_posp {x : X} (h : 0 ≤ x) : posp x = x := by
   dsimp
@@ -166,6 +168,25 @@ lemma abs_smul' {x : X} {a : ℝ} : |a • x| = |a| • |x| := by
     rw [nonneg_smul_sup x (-x) (-a) (by linarith)]
     simp [sup_comm]
 
+lemma disjoint_smul (x y : X) (a : ℝ) (ha : 0 ≤ a) (h : x ⊓ y = 0) :
+    (a • x) ⊓ y = 0 := by
+  have xnonneg : 0 ≤ x := by rw [← h]; exact inf_le_left
+  have ynonneg : 0 ≤ y := by rw [← h]; exact inf_le_right
+  by_cases hone : 1 ≤ a
+  · sorry
+  · push_neg at hone
+    apply le_antisymm
+    · calc
+        a • x ⊓ y ≤ (1 : ℝ) • x ⊓ y := by
+            apply inf_le_inf
+            · exact smul_le_smul_of_nonneg_right (le_of_lt hone) xnonneg
+            · exact le_refl y
+          _ = 0 := by simp [h]
+    · apply le_inf
+      · exact smul_nonneg ha xnonneg
+      · exact ynonneg
+
+
 lemma sub_inf_posp_sub (x y : X) : x - x ⊓ y = posp (x-y) := by
   calc
     x - x ⊓ y = x + (-x) ⊔ (-y) := by rw [sub_eq_add_neg, neg_inf]
@@ -177,6 +198,22 @@ lemma sup_sub_posp_sub (x y : X) : x ⊔ y - x = posp (y-x) := by
     x ⊔ y - x = (x - x) ⊔ (y - x) := by rw [sup_sub x y x]
             _ = 0 ⊔ (y - x) := by simp
             _ = posp (y - x) := by simp; exact sup_comm 0 (y - x)
+
+lemma posp_sub_eq_zero_iff {x y : X} : posp (x-y) = 0 ↔ x ≤ y := by
+  constructor
+  · intro h
+    simp at h
+    exact h
+  · intro h
+    simp [h]
+
+lemma negp_sub_eq_zero_iff {x y : X} : negp (x-y) = 0 ↔ y ≤ x := by
+  constructor
+  · intro h
+    simp at h
+    exact h
+  · intro h
+    simp [h]
 
 theorem Riesz_decomposition {x y z : X} (xpos : 0 ≤ x) (ypos : 0 ≤ y)
   (zpos : 0 ≤ z) (h : x ≤ y + z) : ∃ x1 x2 : X, (0 ≤ x1) ∧ (x1 ≤ y) ∧

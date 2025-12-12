@@ -6,3 +6,6 @@ import VecLat.Quotient
 import VecLat.UnitalAMSpace
 import VecLat.Maximal
 import VecLat.Character
+import VecLat.CofK
+import VecLat.Kakutani
+import VecLat.Temp
