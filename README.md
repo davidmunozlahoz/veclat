@@ -1,9 +1,18 @@
-# Vector Lattices
+# 🚀 Vector Lattices
 
-We will try to follow mathlib's [naming conventions](https://leanprover-community.github.io/contribute/naming.html),
+ℹ️ The goal of this project is to formalize (part of) the theory of vector and Banach lattices in [Lean](https://lean-lang.org/).
+
+⛏️ Currently we are working toward a proof of the Kakutani—Bohnenblust—Krein theorem: an AM-space with unit e is
+isomorphic to a dense sublattice of C(K), for some compact Hausdorff space K, with e going to the constant one function.
+
+📖 [Blueprint](https://davidmunozlahoz.github.io/veclat/blueprint) (🚧 under construction 🚧).
+
+🌟 We try to follow mathlib's [naming conventions](https://leanprover-community.github.io/contribute/naming.html),
 [code style guidelines](https://leanprover-community.github.io/contribute/style.html),
 [documentation style](https://leanprover-community.github.io/contribute/doc.html),
 and [commit conventions](https://leanprover-community.github.io/contribute/commit.html).
 
-Chores:
-- [ ] Organize into folders.
+📚 References:
+- SCHAEFER, Helmut H. Banach lattices. En Banach Lattices and Positive Operators. Berlin, Heidelberg: Springer Berlin Heidelberg, 1974. p. 46-153.
+- MEYER-NIEBERG, Peter. Banach lattices. Springer Science & Business Media, 2012.
+- LINDENSTRAUSS, Joram; TZAFRIRI, Lior. Classical Banach spaces II: function spaces. Springer Science & Business Media, 2013.
