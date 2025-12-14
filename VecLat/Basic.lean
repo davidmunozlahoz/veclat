@@ -93,46 +93,6 @@ theorem Riesz_decomposition (y z : X) (xnonneg : 0 ≤ x) (ynonneg : 0 ≤ y)
       exact this.1
     · simp
 
-section Archimedean
-
-variable [Archimedean X]
-
-lemma infinitesimal_is_zero {x y : X}
-  (infinitesimal : ∀ n : ℕ, n • |x| ≤ y) : x = 0 := by
-  by_contra h
-  have : 0 < |x| := by
-    apply lt_of_le_of_ne
-    · apply abs_nonneg
-    intro heq
-    symm at heq
-    have : x = 0 := by apply (abs_eq_zero_iff_zero x).mp heq
-    contradiction
-  obtain ⟨n, hn⟩ := exists_lt_nsmul this y
-  specialize infinitesimal n
-  have : n • |x| < n • |x| := by
-    apply lt_of_le_of_lt infinitesimal hn
-  apply lt_irrefl (n • |x|) this
-
-lemma arch' {x y : X} (h : ∀ n : ℕ, n • x ≤ y) : x ≤ 0 := by
-  apply (leq_posPart_negPart x 0).mpr
-  constructor
-  · have : ∀ n : ℕ, n • |x⁺| ≤ y⁺ := by
-      intro n
-      calc
-        n • |x⁺| = n • x⁺ := by congr; apply abs_of_nonneg (posPart_nonneg x)
-               _ = n • (x ⊔ 0) := by rw [posPart_def]
-               _ = (n • x) ⊔ (n • 0) := by sorry
-               _ = (n • x ) ⊔ 0 := by sorry
-               _ = (n • x)⁺ := by rw [posPart_def]
-               _ ≤ y⁺ := by exact ((leq_posPart_negPart (n • x) y).mp (h n)).1
-    have xpos_zero : x⁺ = 0 := infinitesimal_is_zero this
-    rw [xpos_zero]
-    simp
-  · simp
-    exact negPart_nonneg x
-
-end Archimedean
-
 end LatticeOrderedGroup
 
 section VectorLattice
@@ -142,7 +102,7 @@ variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
 
 variable (x y : X)
 
-lemma nonneg_smul_sup (a : ℝ) (nonneg : a ≥ 0) :
+theorem nonneg_smul_sup (a : ℝ) (nonneg : a ≥ 0) :
   a • (x ⊔ y) = (a • x) ⊔ (a • y) := by
   by_cases h : a = 0
   · subst h
@@ -169,7 +129,7 @@ lemma nonneg_smul_sup (a : ℝ) (nonneg : a ≥ 0) :
         smul_le_smul_of_nonneg_left le_sup_right nonneg
       exact sup_le hx hy
 
-lemma nonneg_smul_inf (a : ℝ) (nonneg : a ≥ 0) :
+theorem nonneg_smul_inf (a : ℝ) (nonneg : a ≥ 0) :
   a • (x ⊓ y) = (a • x) ⊓ (a • y) := by
     calc
       a • (x ⊓ y) = (-1) • a • (- (x ⊓ y)) := by simp
@@ -180,7 +140,7 @@ lemma nonneg_smul_inf (a : ℝ) (nonneg : a ≥ 0) :
 
 /- Already in mathlib but only for total orders. -/
 
-lemma abs_smul' (a : ℝ) : |a • x| = |a| • |x| := by
+theorem abs_smul' (a : ℝ) : |a • x| = |a| • |x| := by
   by_cases ha : a ≥ 0
   · rw [abs_of_nonneg ha]
     rw [abs, abs]
@@ -194,21 +154,81 @@ lemma abs_smul' (a : ℝ) : |a • x| = |a| • |x| := by
 
 lemma disjoint_smul (a : ℝ) (nonneg : 0 ≤ a) (h : x ⊓ y = 0) :
     (a • x) ⊓ y = 0 := by
-  have xnonneg : 0 ≤ x := by rw [← h]; exact inf_le_left
-  have ynonneg : 0 ≤ y := by rw [← h]; exact inf_le_right
-  by_cases hone : 1 ≤ a
-  · sorry
-  · push_neg at hone
+  let aux (x y : X) (h : x ⊓ y = 0) (a : ℝ)
+  (nonneg : 0 ≤ a) (hone : a ≤ 1) : (a • x) ⊓ y = 0 := by
+    have xnonneg : 0 ≤ x := by rw [← h]; exact inf_le_left
+    have ynonneg : 0 ≤ y := by rw [← h]; exact inf_le_right
     apply le_antisymm
     · calc
         a • x ⊓ y ≤ (1 : ℝ) • x ⊓ y := by
             apply inf_le_inf
-            · exact smul_le_smul_of_nonneg_right (le_of_lt hone) xnonneg
+            · exact smul_le_smul_of_nonneg_right hone xnonneg
             · exact le_refl y
           _ = 0 := by simp [h]
     · apply le_inf
       · exact smul_nonneg nonneg xnonneg
       · exact ynonneg
+  have (hone : ¬ a ≤ 1) : (a • x) ⊓ y = 0 := by
+    push_neg at hone
+    suffices x ⊓ (a⁻¹ • y) = 0 from by
+      symm
+      calc
+        0 = a • ( x ⊓ (a⁻¹ • y) ):= by rw [this, smul_zero]
+        _ = (a • x ⊓ a • a⁻¹ • y) := by
+            exact nonneg_smul_inf x (a⁻¹ • y) a nonneg
+        _ = (a • x) ⊓ y := by rw [smul_smul]; field_simp [hone]; simp
+    rw [inf_comm]
+    rw [inf_comm] at h
+    refine aux y x h a⁻¹ ?nonneg ?one
+    · exact inv_nonneg.mpr nonneg
+    · field_simp
+      exact (le_of_lt hone)
+  by_cases hone : a ≤ 1
+  · exact aux x y h a nonneg hone
+  · exact this hone
+
+section Archimedean
+
+variable [Archimedean X]
+
+omit [VectorLattice X] in
+lemma infinitesimal_is_zero {x y : X}
+  (infinitesimal : ∀ n : ℕ, n • |x| ≤ y) : x = 0 := by
+  by_contra h
+  have : 0 < |x| := by
+    apply lt_of_le_of_ne
+    · apply abs_nonneg
+    intro heq
+    symm at heq
+    have : x = 0 := by apply (abs_eq_zero_iff_zero x).mp heq
+    contradiction
+  obtain ⟨n, hn⟩ := exists_lt_nsmul this y
+  specialize infinitesimal n
+  have : n • |x| < n • |x| := by
+    apply lt_of_le_of_lt infinitesimal hn
+  apply lt_irrefl (n • |x|) this
+
+lemma arch' {x y : X} (h : ∀ n : ℕ, n • x ≤ y) : x ≤ 0 := by
+  apply (leq_posPart_negPart x 0).mpr
+  constructor
+  · have : ∀ n : ℕ, n • |x⁺| ≤ y⁺ := by
+      intro n
+      calc
+        n • |x⁺| = n • x⁺ := by congr; apply abs_of_nonneg (posPart_nonneg x)
+               _ = n • (x ⊔ 0) := by rw [posPart_def]
+               _ = (n:ℝ) • (x ⊔ 0) := by norm_cast
+               _ = ((n:ℝ) • x) ⊔ ((n:ℝ) • 0) := by
+                 rw [nonneg_smul_sup x 0 (n:ℝ) (by norm_num)]
+               _ = ((n:ℝ) • x) ⊔ 0 := by rw [smul_zero (n:ℝ)]
+               _ = ((n:ℝ) • x)⁺ := by rw [posPart_def]
+               _ ≤ y⁺ := by norm_cast; exact ((leq_posPart_negPart (n • x) y).mp (h n)).1
+    have xpos_zero : x⁺ = 0 := infinitesimal_is_zero this
+    rw [xpos_zero]
+    simp
+  · simp
+    exact negPart_nonneg x
+
+end Archimedean
 
 noncomputable instance : VectorLattice ℝ := {
   toModule := inferInstance
