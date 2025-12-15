@@ -1,5 +1,4 @@
 import VecLat.Basic
-import VecLat.UnitalAMSpace
 
 import Mathlib.Topology.ContinuousMap.Compact
 
@@ -48,14 +47,5 @@ noncomputable instance instVectorLattice : VectorLattice C(K, ℝ) where
   smul_le_smul_of_nonneg_left := by
     intro f fpos g h hgh t
     exact smul_le_smul_of_nonneg_left (hgh t) fpos
-
-/- Not needed, but for the future:
-
-instance instArchimedean : Archimedean C(K, ℝ) := sorry
-instance instIsUnitalAMSpace : IsUnitalAMSpace C(K, ℝ) 1 := sorry
-
-and then show that the norm as an AMSpace coincides with the norm
-already defined in C(K, ℝ). -/
-
 
 end CofK

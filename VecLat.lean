@@ -1,1 +1,12 @@
 import VecLat.Basic
+import VecLat.CofK
+import VecLat.Hom
+import VecLat.VectorOrderIdeal.Basic
+import VecLat.VectorOrderIdeal.Lattice
+import VecLat.VectorOrderIdeal.PrincipalIdeal
+import VecLat.VectorOrderIdeal.Quotient
+import VecLat.VectorOrderIdeal.Maximal
+import VecLat.UnitalAMSpace.Basic
+import VecLat.UnitalAMSpace.Maximal
+import VecLat.UnitalAMSpace.Character
+import VecLat.UnitalAMSpace.Kakutani

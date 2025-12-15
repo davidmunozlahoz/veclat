@@ -1,6 +1,4 @@
-import VecLat.Basic
-import VecLat.VectorOrderIdeal
-import VecLat.Hom
+import VecLat.VectorOrderIdeal.Basic
 
 import Mathlib.LinearAlgebra.Quotient.Defs
 
@@ -17,6 +15,9 @@ instance instAddCommGroup : AddCommGroup (X ⧸ I) :=
 
 instance instModule : Module ℝ (X ⧸ I) :=
   Submodule.Quotient.module I.toSubmodule
+
+instance instLE : LE (X ⧸ I) where
+  le := fun a b => ∃ x : X, (0 ≤ x) ∧ (I.mkQ x = b - a)
 
 def quot_sup : X⧸I → X⧸I → X⧸I := by
     let f : X → X → X⧸I := fun x y => I.mkQ (x ⊔ y)
@@ -40,11 +41,13 @@ def quot_sup : X⧸I → X⧸I → X⧸I := by
     let f₃ : X⧸I → X⧸I → X⧸I := Quotient.lift f₂ wd₂
     exact f₃
 
-lemma mkQ_map_sup {x y : X} : I.mkQ (x ⊔ y) = quot_sup I (I.mkQ x) (I.mkQ y) := by
+theorem mkQ_map_sup {x y : X} : I.mkQ (x ⊔ y) = quot_sup I (I.mkQ x) (I.mkQ y) := by
   dsimp [quot_sup,Quotient.lift,Submodule.Quotient.mk]
 
+theorem lift_inequality {a b : X ⧸ I} (hab : a ≤ b) :
+    ∃ x y : X, (x ≤ y) ∧ (I.mkQ x = a) ∧ (I.mkQ y = b) := by sorry
+
 instance instLattice : Lattice (X ⧸ I) where
-  le := fun a b => ∃ x : X, (0 ≤ x) ∧ (I.mkQ x = b - a)
   le_refl := by
     intro a
     use 0

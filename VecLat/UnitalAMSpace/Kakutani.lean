@@ -1,7 +1,7 @@
-import VecLat.Character
+import VecLat.UnitalAMSpace.Character
 import VecLat.CofK
 
-open UnitalAMSpace Character
+open UnitalAMSpace Maximal
 
 variable (X : Type*) [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
 [VectorLattice X] [Archimedean X] (e : X) [IsUnitalAMSpace X e]

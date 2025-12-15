@@ -1,11 +1,7 @@
-import VecLat.Basic
-import VecLat.VectorOrderIdeal
-import VecLat.UnitalAMSpace
-import VecLat.Lattice
+import VecLat.VectorOrderIdeal.Basic
+import VecLat.VectorOrderIdeal.Lattice
 
-universe u
-
-variable {X : Type u} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
+variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
   [VectorLattice X]
 
 def PrincipalIdeal (a : X) := {x : X | ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • a}
@@ -35,7 +31,7 @@ instance instSubmodule : Submodule ℝ X where
       · exact abs_nonneg r
       · exact hs.1
     · calc
-      |r • x| = |r| • |x| := abs_smul'
+      |r • x| = |r| • |x| := abs_smul' x r
       _ ≤ |r| • (s • a) := smul_le_smul_of_nonneg_left hs.2 (abs_nonneg r)
       _ = (|r| * s) • a := by rw [mul_smul]
 
@@ -70,20 +66,52 @@ instance instIsOrderedAddMonoid : IsOrderedAddMonoid (PrincipalIdeal a) :=
 instance instVectorLattice : VectorLattice (PrincipalIdeal a) :=
   (inferInstance : VectorLattice (instVectorSublattice a))
 
-lemma gen_mem (apos : 0 ≤ a) : a ∈ PrincipalIdeal a := by
+theorem gen_mem (apos : 0 ≤ a) : a ∈ PrincipalIdeal a := by
   use 1
   constructor
   · exact zero_le_one
   · rw [one_smul]
     rw [abs_of_nonneg apos]
 
-lemma disjoint_not_mem (h : a₊ ∈ PrincipalIdeal (a₋)) : a₊ = 0 := by
-  /- use and prove disjoint_smul -/
-  sorry
+theorem posPart_notmem_PI_negPart (h : a⁺ ∈ PrincipalIdeal (a⁻)) : a⁺ = 0 := by
+  obtain ⟨s, hs1, hs2⟩ := h
+  apply le_antisymm
+  · calc
+      a⁺ = a⁺ ⊓ |a⁺| := by simp [abs]
+       _ ≤ a⁺ ⊓ (s • a⁻) := by
+          apply inf_le_inf
+          · rfl
+          · exact hs2
+       _ = (s • a⁻) ⊓ a⁺ := by exact inf_comm a⁺ _
+       _ = 0 := disjoint_smul a⁻ a⁺ s hs1
+                (by rw [inf_comm]; exact posPart_inf_negPart_eq_zero a)
+  · exact posPart_nonneg a
 
-lemma bot_iff_zero : PrincipalIdeal a = (⊥ : VectorOrderIdeal X) ↔ a = 0 := by sorry
-/- def gen_type (apos : 0 ≤ a) : PrincipalIdeal a := ⟨a, gen_mem a apos⟩ -/
-/- TO DO: show that every PrincipalIdeal a is an instance of
-   IsUnitalAMSpace -/
+theorem bot_iff_zero (apos : 0 ≤ a) : PrincipalIdeal a = (⊥ : VectorOrderIdeal X) ↔ a = 0 := by
+  constructor
+  · intro h
+    have : a ∈ (⊥ : VectorOrderIdeal X) := by
+      change a ∈ ((⊥ : VectorOrderIdeal X) : Set X)
+      rw [← h]
+      exact gen_mem a apos
+    change a ∈ (⊥ : Submodule ℝ X) at this
+    rw [Submodule.mem_bot] at this
+    assumption
+  · intro h
+    rw [h]
+    ext x
+    constructor
+    · intro h'
+      change x ∈ (⊥ : Submodule ℝ X)
+      rw [Submodule.mem_bot]
+      obtain ⟨s, hs1, hs2⟩ := h'
+      simp at hs2
+      have : |x| = 0 := le_antisymm hs2 (abs_nonneg x)
+      exact (abs_eq_zero_iff_zero x).mp this
+    · intro h'
+      change x ∈ (⊥ : Submodule ℝ X) at h'
+      rw [Submodule.mem_bot] at h'
+      rw [h']
+      exact gen_mem 0 (le_refl 0)
 
 end PrincipalIdeal

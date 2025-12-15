@@ -1,5 +1,4 @@
-import VecLat.Basic
-import VecLat.VectorOrderIdeal
+import VecLat.VectorOrderIdeal.Basic
 
 variable {X : Type*} [AddCommGroup X] [Lattice X]
   [IsOrderedAddMonoid X] [VectorLattice X]

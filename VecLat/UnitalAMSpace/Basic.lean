@@ -1,7 +1,5 @@
 import VecLat.Basic
 
-set_option linter.unusedSectionVars false
-
 class IsUnitalAMSpace (X : Type*) (e : outParam X) [AddCommGroup X] [Lattice X]
   [IsOrderedAddMonoid X] [VectorLattice X] where
   pos : 0 ≤ e
@@ -12,22 +10,23 @@ namespace UnitalAMSpace
 variable {X : Type*} [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
   [VectorLattice X] (e : X) [IsUnitalAMSpace X e]
 
-lemma unit_pos : 0 ≤ e := IsUnitalAMSpace.pos
+theorem unit_pos : 0 ≤ e := IsUnitalAMSpace.pos
 
-lemma unit_def (x : X) : ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • e := IsUnitalAMSpace.unit x
+theorem unit_def (x : X) : ∃ s : ℝ, 0 ≤ s ∧ |x| ≤ s • e := IsUnitalAMSpace.unit x
 
 noncomputable section
 
-def S (x : X) := { s : ℝ | 0 ≤ s ∧ |x| ≤ s • e }
-
 variable (x : X)
 
-lemma S_nonempty : (S e x).Nonempty := by
+def S := { s : ℝ | 0 ≤ s ∧ |x| ≤ s • e }
+
+theorem S_nonempty : (S e x).Nonempty := by
   obtain ⟨s, hs⟩ := unit_def e x
   use s
   exact hs
 
-lemma S_bddbelow : BddBelow (S e x) := by
+omit [IsUnitalAMSpace X e] in
+theorem S_bddbelow : BddBelow (S e x) := by
   use 0
   intro s hs
   exact hs.1
@@ -35,16 +34,18 @@ lemma S_bddbelow : BddBelow (S e x) := by
 def norm : X → ℝ :=
   fun x => sInf (S e x)
 
-lemma norm_def : norm e x = sInf (S e x) := rfl
+omit [IsUnitalAMSpace X e] in
+theorem norm_def : norm e x = sInf (S e x) := rfl
 
-lemma norm_nonneg : 0 ≤ norm e x := by
+omit [IsUnitalAMSpace X e] in
+theorem norm_nonneg : 0 ≤ norm e x := by
   rw [norm_def]
   apply Real.le_sInf
   · intro s hs
     exact hs.1
   · simp
 
-lemma gt_norm (t : ℝ) (h : norm e x < t) : |x| ≤ t • e := by
+theorem gt_norm (t : ℝ) (h : norm e x < t) : |x| ≤ t • e := by
   rw [norm_def] at h
   rw [csInf_lt_iff (S_bddbelow e x) (S_nonempty e x)] at h
   obtain ⟨b, hbS, hbt⟩ := h
@@ -52,13 +53,12 @@ lemma gt_norm (t : ℝ) (h : norm e x < t) : |x| ≤ t • e := by
     |x| ≤ b • e := by exact hbS.2
       _ ≤ t • e := by
         apply smul_le_smul_of_nonneg_right (le_of_lt hbt) (unit_pos e)
-end
 
 variable [Archimedean X]
 
 variable (x : X)
 
-lemma norm_attained : |x| ≤ (norm e x) • e := by
+theorem norm_attained : |x| ≤ (norm e x) • e := by
   have h : ∀ t : ℝ, 0 < t → |x| ≤ ((norm e x) + t) • e := by
     intro t ht
     exact gt_norm e x ((norm e x) + t) (by norm_num [ht])
@@ -94,7 +94,7 @@ lemma norm_attained : |x| ≤ (norm e x) • e := by
   simp
   exact this
 
-lemma norm_zero_iff_zero : norm e x = 0 ↔ x = 0 := by
+theorem norm_zero_iff_zero : norm e x = 0 ↔ x = 0 := by
   constructor
   · intro h
     have : |x| ≤ (0:ℝ) • e := by
@@ -112,10 +112,10 @@ lemma norm_zero_iff_zero : norm e x = 0 ↔ x = 0 := by
       apply csInf_le (S_bddbelow e x) hc
     · exact norm_nonneg e x
 
-lemma norm_smul (r : ℝ) : norm e (r•x) = |r| • (norm e x) := by
+theorem norm_smul (r : ℝ) : norm e (r•x) = |r| • (norm e x) := by
   sorry
 
-lemma norm_add (y : X) : norm e (x + y) ≤ norm e x + norm e y := by
+theorem norm_add (y : X) : norm e (x + y) ≤ norm e x + norm e y := by
   have : norm e x + norm e y ∈ S e (x + y) := by
     constructor
     · apply add_nonneg (norm_nonneg e x) (norm_nonneg e y)
@@ -126,7 +126,7 @@ lemma norm_add (y : X) : norm e (x + y) ≤ norm e x + norm e y := by
               _ = (norm e x + norm e y) • e := by rw [add_smul]
   exact csInf_le (S_bddbelow e (x+y)) this
 
-lemma abs_le_abs_norm (y : X) (hxy : |x| ≤ |y|) :
+theorem abs_le_abs_norm (y : X) (hxy : |x| ≤ |y|) :
     norm e x ≤ norm e y := by
   have : norm e y ∈ S e x := by
     constructor
@@ -135,14 +135,14 @@ lemma abs_le_abs_norm (y : X) (hxy : |x| ≤ |y|) :
       exact norm_attained e y
   exact csInf_le (S_bddbelow e x) this
 
-lemma norm_eq_norm_abs : norm e x = norm e |x| := by
+theorem norm_eq_norm_abs : norm e x = norm e |x| := by
   have : abs |x| ≤ |x| := by
       rw [abs_of_nonneg (abs_nonneg x)]
   apply le_antisymm
   · exact abs_le_abs_norm e x |x| (le_abs_self |x|)
   · exact abs_le_abs_norm e |x| x this
 
-lemma AMnorm (y : X) (xpos : 0 ≤ x) (ypos : 0 ≤ y) :
+theorem AMnorm (y : X) (xpos : 0 ≤ x) (ypos : 0 ≤ y) :
       norm e (x ⊔ y) = (norm e x) ⊔ (norm e y) := by
       have sup_eq_abs : |x ⊔ y| = x ⊔ y := by
         apply abs_of_nonneg
@@ -187,8 +187,6 @@ lemma AMnorm (y : X) (xpos : 0 ≤ x) (ypos : 0 ≤ y) :
         apply max_le
         · exact abs_le_abs_norm e x (x ⊔ y) hx
         · exact abs_le_abs_norm e y (x ⊔ y) hy
-
-noncomputable section
 
 instance instNormedAddCommGroup : NormedAddCommGroup X where
   norm := norm e

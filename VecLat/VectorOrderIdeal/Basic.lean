@@ -44,7 +44,7 @@ instance instVectorLattice (Y : VectorSublattice X) : VectorLattice Y :=
           _ = a • b' := by simp
   }
 
-lemma abs_mem {Y : VectorSublattice X} {x : X} (h : x ∈ Y) : |x| ∈ Y := by
+theorem abs_mem {Y : VectorSublattice X} {x : X} (h : x ∈ Y) : |x| ∈ Y := by
   exact Y.sup_mem h (Y.neg_mem h)
 
 def ofSubmoduleAbs (s : Submodule ℝ X) (h : ∀ x ∈ s, |x| ∈ s) :
@@ -122,7 +122,6 @@ lemma sub_mem_sup_sub_sup_mem {I : VectorOrderIdeal X} {x y y' : X}
     rw [sup_comm, sup_comm x y']
     exact abs_sup_sub_sup_le_abs y y' x
   exact I.solid this h
-
 
 variable {Y : Type u} [AddCommGroup Y] [Lattice Y] [IsOrderedAddMonoid Y] [VectorLattice Y]
 
