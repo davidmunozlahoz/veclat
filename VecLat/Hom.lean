@@ -1,10 +1,8 @@
 import VecLat.Basic
 
-variable (X : Type*) (Y : Type*) [AddCommGroup X] [AddCommGroup Y]
+structure VecLatHom (X : Type*) (Y : Type*) [AddCommGroup X] [AddCommGroup Y]
   [Lattice X] [Lattice Y] [IsOrderedAddMonoid X] [IsOrderedAddMonoid Y]
-  [VectorLattice X] [VectorLattice Y]
-
-structure VecLatHom extends X →ₗ[ℝ] Y, LatticeHom X Y
+  [VectorLattice X] [VectorLattice Y] extends X →ₗ[ℝ] Y, LatticeHom X Y
 
 variable {X : Type*} {Y : Type*} [AddCommGroup X] [AddCommGroup Y]
   [Lattice X] [Lattice Y] [IsOrderedAddMonoid X] [IsOrderedAddMonoid Y]
@@ -51,9 +49,11 @@ instance instLinearMapClass : LinearMapClass (VecLatHom X Y) ℝ X Y where
 @[simp]
 theorem toFun_eq_coe {f : VecLatHom X Y} : f.toFun = (f : X → Y) := rfl
 
-lemma map_abs (f : VecLatHom X Y) (x : X) : f |x| = |f x| := by simp
+theorem map_abs (f : VecLatHom X Y) (x : X) : f |x| = |f x| := by
+  rw [abs, abs]
+  simp
 
-lemma monotone (f : VecLatHom X Y) : Monotone f := by
+theorem monotone (f : VecLatHom X Y) : Monotone f := by
   intro x y hxy
   have : x ⊔ y = y := by simp [hxy]
   rw [← sup_eq_right, ← map_sup f x y, this]
@@ -83,5 +83,59 @@ def of_abs (f : X →ₗ[ℝ] Y) (abs : ∀ x : X, f |x| = |f x|) : VecLatHom X 
         congr
         exact f.map_sub y x
     }
+
+def comp {Z : Type*} [AddCommGroup Z] [Lattice Z] [IsOrderedAddMonoid Z]
+  [VectorLattice Z] (g : VecLatHom Y Z) (f : VecLatHom X Y) :
+  VecLatHom X Z :=
+  {LinearMap.comp g.toLinearMap f.toLinearMap with
+    map_sup' := by
+      intro x y
+      simp
+      change g ( f (x ⊔ y) ) = (g (f x)) ⊔ (g (f y))
+      simp
+    map_inf' := by
+      intro x y
+      simp
+      change g ( f (x ⊓ y) ) = (g (f x)) ⊓ (g (f y))
+      simp
+  }
+
+noncomputable def symm (f : VecLatHom X Y) (h : Function.Bijective f) : VecLatHom Y X :=
+  {(LinearEquiv.ofBijective f.toLinearMap h).symm with
+    map_sup' := by
+      intro a b
+      change
+        (LinearEquiv.ofBijective f.toLinearMap h).symm (a ⊔ b) =
+        (LinearEquiv.ofBijective f.toLinearMap h).symm a ⊔
+        (LinearEquiv.ofBijective f.toLinearMap h).symm b
+      rw [LinearEquiv.symm_apply_eq]
+      change
+        a ⊔ b = f ( (LinearEquiv.ofBijective f.toLinearMap h).symm a ⊔
+        (LinearEquiv.ofBijective f.toLinearMap h).symm b)
+      rw [map_sup]
+      change
+        a ⊔ b = LinearEquiv.ofBijective f.toLinearMap h
+                ((LinearEquiv.ofBijective f.toLinearMap h).symm a) ⊔
+                LinearEquiv.ofBijective f.toLinearMap h
+                ((LinearEquiv.ofBijective f.toLinearMap h).symm b)
+      rw [LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
+    map_inf' := by
+      intro a b
+      change
+        (LinearEquiv.ofBijective f.toLinearMap h).symm (a ⊓ b) =
+        (LinearEquiv.ofBijective f.toLinearMap h).symm a ⊓
+        (LinearEquiv.ofBijective f.toLinearMap h).symm b
+      rw [LinearEquiv.symm_apply_eq]
+      change
+        a ⊓ b = f ( (LinearEquiv.ofBijective f.toLinearMap h).symm a ⊓
+        (LinearEquiv.ofBijective f.toLinearMap h).symm b)
+      rw [map_inf]
+      change
+        a ⊓ b = LinearEquiv.ofBijective f.toLinearMap h
+                ((LinearEquiv.ofBijective f.toLinearMap h).symm a) ⊓
+                LinearEquiv.ofBijective f.toLinearMap h
+                ((LinearEquiv.ofBijective f.toLinearMap h).symm b)
+      rw [LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
+  }
 
 end VecLatHom
