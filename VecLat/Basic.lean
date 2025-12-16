@@ -138,6 +138,26 @@ theorem nonneg_smul_inf (a : ℝ) (nonneg : a ≥ 0) :
                 _ = - ((-a • x) ⊔ (-a • y)) := by simp
                 _ = (a • x) ⊓ (a • y) := by rw [neg_sup]; simp
 
+theorem sup_smul_nonneg (a b : ℝ) (h : 0 ≤ x) :
+    (a ⊔ b) • x = (a • x) ⊔ (b • x) := by
+  apply le_antisymm
+  · cases max_choice a b with
+      | inl h => rw [h]; exact le_sup_left
+      | inr h => rw [h]; exact le_sup_right
+  · apply sup_le
+    · exact smul_le_smul_of_nonneg_right le_sup_left h
+    · exact smul_le_smul_of_nonneg_right le_sup_right h
+
+theorem inf_smul_nonneg (a b : ℝ) (h : 0 ≤ x) :
+    (a ⊓ b) • x = (a • x) ⊓ (b • x) := by
+  apply le_antisymm
+  · apply le_inf
+    · exact smul_le_smul_of_nonneg_right inf_le_left h
+    · exact smul_le_smul_of_nonneg_right inf_le_right h
+  · cases min_choice a b with
+      | inl h => rw [h]; exact inf_le_left
+      | inr h => rw [h]; exact inf_le_right
+
 /- Already in mathlib but only for total orders. -/
 
 theorem abs_smul' (a : ℝ) : |a • x| = |a| • |x| := by
