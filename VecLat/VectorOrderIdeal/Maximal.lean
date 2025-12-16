@@ -184,7 +184,8 @@ theorem one_dim_pos (x y : X)
           · exact h2 n this
           · exact le_refl _
         calc
-          n • (x' - t • y') ≤ n • ((t+1/n)•y' - t • y') := by exact smul_le_smul_of_nonneg_left temp (Nat.cast_nonneg n)
+          n • (x' - t • y') ≤ n • ((t+1/n)•y' - t • y') := by exact
+                (smul_le_smul_of_nonneg_left temp (Nat.cast_nonneg n))
                           _ = n • ( (1/n:ℝ)•y' ) := by
                               congr
                               rw [add_smul, add_sub_assoc,
@@ -218,7 +219,7 @@ theorem one_dim (x y : X) (ypos : 0 < Quotient.mkQ I y) :
   | inr x'nonneg =>
     exact one_dim_pos I x y x'nonneg ypos
 
-variable (e : X) (epos : 0 < Quotient.mkQ I e)
+variable {e : X} (epos : 0 < Quotient.mkQ I e)
 
 def real_map : VecLatHom ℝ (X ⧸ I) where
   toFun := fun t => t • Quotient.mkQ I e
@@ -229,19 +230,51 @@ def real_map : VecLatHom ℝ (X ⧸ I) where
     intro t s
     simp
     exact mul_smul t s ((Quotient.mkQ I) e)
-  map_sup' := by sorry
-  map_inf' := by sorry
+  map_sup' := by
+    intro t s
+    exact sup_smul_nonneg ((Quotient.mkQ I) e) t s (le_of_lt epos)
+  map_inf' := by
+    intro t s
+    exact inf_smul_nonneg ((Quotient.mkQ I) e) t s (le_of_lt epos)
 
-lemma real_map_injective : Function.Injective (real_map I e) := sorry
-lemma real_map_surjective : Function.Surjective (real_map I e) := sorry
-lemma real_map_bijective : Function.Bijective (real_map I e) := sorry
+omit [IsMaximal I] in
+lemma real_map_injective : Function.Injective (real_map I epos) := by
+  intro t s h
+  change t • Quotient.mkQ I e = s • Quotient.mkQ I e at h
+  have : 0 ≠ Quotient.mkQ I e := ne_of_lt epos
+  have h : (t - s) • Quotient.mkQ I e = 0 := by
+    rw [sub_smul, sub_eq_zero]
+    exact h
+  apply smul_eq_zero.mp at h
+  cases h with
+  | inl h' => rw [← sub_eq_zero]; assumption
+  | inr h' => exact False.elim (this (id (Eq.symm h')))
+
+lemma real_map_surjective : Function.Surjective (real_map I epos) := by
+  intro a
+  obtain ⟨x, hx⟩ := Submodule.mkQ_surjective I.toSubmodule a
+  obtain ⟨t, ht⟩ := one_dim I x e epos
+  use t
+  rw [← hx]
+  change t • Quotient.mkQ I e = Quotient.mkQ I x
+  exact Eq.symm ht
+
+lemma real_map_bijective : Function.Bijective (real_map I epos) :=
+  ⟨real_map_injective I epos, real_map_surjective I epos⟩
 
 noncomputable def character : VecLatHom X ℝ :=
-  VecLatHom.comp (VecLatHom.symm (real_map I e) (real_map_bijective I e)) (Quotient.mkQ I)
+  VecLatHom.comp (VecLatHom.symm (real_map I epos)
+  (real_map_bijective I epos)) (Quotient.mkQ I)
 
-theorem character_basis : (character I e) e = 1 := by sorry
+theorem character_basis : (character I epos) e = 1 := by
+  rw [character, VecLatHom.comp_apply, VecLatHom.symm_apply]
+  change (Quotient.mkQ I) e = (1:ℝ) • (Quotient.mkQ I) e
+  simp
 
-theorem character_eval_I (x : X) (xmem : x ∈ I) : (character I e) x = 0 := by
-  sorry
+theorem character_eval_I (x : X) (xmem : x ∈ I) : (character I epos) x = 0 := by
+  rw [character, VecLatHom.comp_apply, VecLatHom.symm_apply]
+  change I.mkQ x = (0:ℝ) • (Quotient.mkQ I) e
+  simp
+  assumption
 
 end Maximal
