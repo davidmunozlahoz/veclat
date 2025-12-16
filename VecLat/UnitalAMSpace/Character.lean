@@ -18,6 +18,10 @@ def Characters : Set (WeakDual ℝ X) := { φ | IsVecLatHom φ ∧ φ e = 1}
 
 theorem attain_norm (x : X) :
     norm e x = sSup { φ x | φ ∈ Characters e } := by sorry
+  /- apply le_antisymm -/
+  /- · sorry -/
+  /- · apply csSup_le -/
+  /-   sorry -/
 
 theorem closed : IsClosed (Characters e) := by sorry
 
