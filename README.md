@@ -13,6 +13,7 @@ isomorphic to a dense sublattice of C(K), for some compact Hausdorff space K, wi
 and [commit conventions](https://leanprover-community.github.io/contribute/commit.html).
 
 ### 📚 References:
+- KAKUTANI, Shizuo. Concrete representation of abstract (M)-spaces (A characterization of the space of continuous functions). Annals of Mathematics, 1941, vol. 42, no 4, p. 994-1024.
 - SCHAEFER, Helmut H. Banach lattices. En Banach Lattices and Positive Operators. Berlin, Heidelberg: Springer Berlin Heidelberg, 1974. p. 46-153.
 - MEYER-NIEBERG, Peter. Banach lattices. Springer Science & Business Media, 2012.
 - LINDENSTRAUSS, Joram; TZAFRIRI, Lior. Classical Banach spaces II: function spaces. Springer Science & Business Media, 2013.
