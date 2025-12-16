@@ -73,7 +73,7 @@ theorem gen_mem (apos : 0 ≤ a) : a ∈ PrincipalIdeal a := by
   · rw [one_smul]
     rw [abs_of_nonneg apos]
 
-theorem posPart_notmem_PI_negPart (h : a⁺ ∈ PrincipalIdeal (a⁻)) : a⁺ = 0 := by
+theorem posPart_mem_PI_negPart (h : a⁺ ∈ PrincipalIdeal (a⁻)) : a⁺ = 0 := by
   obtain ⟨s, hs1, hs2⟩ := h
   apply le_antisymm
   · calc

@@ -37,7 +37,8 @@ lemma KT_veclathom : IsVecLatHom (KT X e) where
     change φ (x ⊓ y) = φ x ⊓ φ y
     exact h1.map_inf' x y
 
-lemma KT_isometry (x : X) : ‖x‖=‖KT X e x‖ := by sorry
+lemma KT_isometry (x : X) : norm e x = ‖KT X e x‖ := by
+  sorry
 
 lemma KT_unit_one : KT X e e = 1 := by
   ext ⟨φ, h1, h2⟩

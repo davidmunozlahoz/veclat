@@ -102,7 +102,7 @@ protected theorem le_total (x y : X ⧸ I) : x ≤ y ∨ y ≤ x := by
         · exact negPart_nonneg (x - y)
       | inr h =>
         have : (x-y)⁺ ∈ J := by rw [h]; trivial
-        have : (x-y)⁺ = 0 := PrincipalIdeal.posPart_notmem_PI_negPart (x-y) this
+        have : (x-y)⁺ = 0 := PrincipalIdeal.posPart_mem_PI_negPart (x-y) this
         left
         simp at this
         assumption
@@ -271,7 +271,7 @@ theorem character_basis : (character I epos) e = 1 := by
   change (Quotient.mkQ I) e = (1:ℝ) • (Quotient.mkQ I) e
   simp
 
-theorem character_eval_I (x : X) (xmem : x ∈ I) : (character I epos) x = 0 := by
+theorem character_eval (x : X) (xmem : x ∈ I) : (character I epos) x = 0 := by
   rw [character, VecLatHom.comp_apply, VecLatHom.symm_apply]
   change I.mkQ x = (0:ℝ) • (Quotient.mkQ I) e
   simp

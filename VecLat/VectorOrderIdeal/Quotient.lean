@@ -217,4 +217,8 @@ def mkQ : VecLatHom X (X ⧸ I) := {
       exact mkQ_map_inf I x y
   }
 
+theorem mk_eq_zero (x : X) : mkQ I x = 0 ↔ x ∈ I := by
+  change I.mkQ x = 0 ↔ x ∈ I
+  exact Submodule.Quotient.mk_eq_zero I.toSubmodule
+
 end Quotient
