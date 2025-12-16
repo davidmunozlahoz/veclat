@@ -1,5 +1,7 @@
 import VecLat.Basic
 
+import Mathlib.Algebra.Order.Group.Pointwise.CompleteLattice
+
 class IsUnitalAMSpace (X : Type*) (e : outParam X) [AddCommGroup X] [Lattice X]
   [IsOrderedAddMonoid X] [VectorLattice X] where
   pos : 0 ≤ e
@@ -53,6 +55,51 @@ theorem gt_norm (t : ℝ) (h : norm e x < t) : |x| ≤ t • e := by
     |x| ≤ b • e := by exact hbS.2
       _ ≤ t • e := by
         apply smul_le_smul_of_nonneg_right (le_of_lt hbt) (unit_pos e)
+
+theorem norm_smul (r : ℝ) : norm e (r•x) = |r| • (norm e x) := by
+  rw [norm, norm]
+  rw [← Real.sInf_smul_of_nonneg (by norm_num)]
+  by_cases hzero : r = 0
+  · rw [hzero]
+    simp [S_nonempty]
+    apply le_antisymm
+    · apply csInf_le (S_bddbelow e 0)
+      constructor
+      · exact le_refl 0
+      · simp
+    · apply le_csInf (S_nonempty e 0)
+      intro t ⟨ht1, ht2⟩
+      exact ht1
+  · congr
+    ext t
+    constructor
+    · intro ⟨h1, h2⟩
+      use 1 / |r| * t
+      constructor
+      · constructor
+        · field_simp [hzero]
+          simp [h1]
+        · calc
+            |x| ≤ (1 / |r|) • |r| • |x| := by
+                rw [smul_smul]
+                field_simp [hzero]
+                rw [one_smul]
+              _ ≤ (1 / |r|) • |r • x| := by rw [abs_smul']
+              _ ≤ (1 / |r|) • t • e := by
+                apply smul_le_smul_of_nonneg_left h2 (by norm_num [hzero])
+              _ = (1 / |r| * t) • e := by rw [smul_smul]
+      · simp [hzero]
+    · intro ⟨s, hs, hst⟩
+      simp at hst
+      obtain ⟨hs1, hs2⟩ := hs
+      constructor
+      · rw [← hst]
+        exact mul_nonneg (abs_nonneg r) hs1
+      · calc
+          |r • x| = |r| • |x| := by exact abs_smul' x r
+                _ ≤ |r| • s • e := by
+                  apply smul_le_smul_of_nonneg_left hs2 (abs_nonneg r)
+                _ = t • e := by rw [smul_smul, hst]
 
 variable [Archimedean X]
 
@@ -111,9 +158,6 @@ theorem norm_zero_iff_zero : norm e x = 0 ↔ x = 0 := by
         · rw [h, zero_smul, abs_zero]
       apply csInf_le (S_bddbelow e x) hc
     · exact norm_nonneg e x
-
-theorem norm_smul (r : ℝ) : norm e (r•x) = |r| • (norm e x) := by
-  sorry
 
 theorem norm_add (y : X) : norm e (x + y) ≤ norm e x + norm e y := by
   have : norm e x + norm e y ∈ S e (x + y) := by
