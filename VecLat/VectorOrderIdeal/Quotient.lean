@@ -41,11 +41,50 @@ def quot_sup : X⧸I → X⧸I → X⧸I := by
     let f₃ : X⧸I → X⧸I → X⧸I := Quotient.lift f₂ wd₂
     exact f₃
 
-theorem mkQ_map_sup {x y : X} : I.mkQ (x ⊔ y) = quot_sup I (I.mkQ x) (I.mkQ y) := by
+lemma mkQ_map_sup (x y : X) :
+    I.mkQ (x ⊔ y) = quot_sup I (I.mkQ x) (I.mkQ y) := by
   dsimp [quot_sup,Quotient.lift,Submodule.Quotient.mk]
 
+def quot_inf : X⧸I → X⧸I → X⧸I := by
+    let f : X → X → X⧸I := fun x y => I.mkQ (x ⊓ y)
+    have wd (x : X) : ∀ (y y' : X), I.quotientRel y y' → f x y = f x y' := by
+      intro y y' rel
+      rw [Submodule.quotientRel_def] at rel
+      dsimp [f]
+      rw [Submodule.Quotient.eq I.toSubmodule]
+      exact VectorOrderIdeal.sub_mem_inf_sub_inf_mem rel
+    let f₂ : X → X⧸I → X⧸I := fun x => Quotient.lift (f x) (wd x)
+    have wd₂ : ∀ (x x' : X), I.quotientRel x x' → f₂ x = f₂ x' := by
+      intro x x' rel
+      ext y
+      obtain ⟨a,ha⟩ := (Submodule.Quotient.mk_surjective I.toSubmodule) y
+      rw [← ha]
+      dsimp [f₂,Quotient.lift,Submodule.Quotient.mk,f]
+      rw [Quotient.eq'',Submodule.quotientRel_def]
+      rw [Submodule.quotientRel_def] at rel
+      rw [inf_comm, inf_comm x']
+      exact VectorOrderIdeal.sub_mem_inf_sub_inf_mem rel
+    let f₃ : X⧸I → X⧸I → X⧸I := Quotient.lift f₂ wd₂
+    exact f₃
+
+lemma mkQ_map_inf (x y : X) :
+    I.mkQ (x ⊓ y) = quot_inf I (I.mkQ x) (I.mkQ y) := by
+  dsimp [quot_inf,Quotient.lift,Submodule.Quotient.mk]
+
 theorem lift_inequality {a b : X ⧸ I} (hab : a ≤ b) :
-    ∃ x y : X, (x ≤ y) ∧ (I.mkQ x = a) ∧ (I.mkQ y = b) := by sorry
+    ∃ x y : X, (x ≤ y) ∧ (I.mkQ x = a) ∧ (I.mkQ y = b) := by
+    obtain ⟨z, hz1, hz2⟩ := hab
+    obtain ⟨x,hx⟩ := (Submodule.Quotient.mk_surjective I.toSubmodule) a
+    obtain ⟨y,hy⟩ := (Submodule.Quotient.mk_surjective I.toSubmodule) b
+    use x
+    use x + z
+    constructor
+    · simp [hz1]
+    · constructor
+      · exact hx
+      · simp [hx]
+        change a + I.mkQ z = b
+        simp [hz2]
 
 instance instLattice : Lattice (X ⧸ I) where
   le_refl := by
@@ -99,11 +138,55 @@ instance instLattice : Lattice (X ⧸ I) where
     · rw [← hx, ← hy, ← Submodule.mkQ_apply,
           ← Submodule.mkQ_apply, ← mkQ_map_sup ]
       simp
-  sup_le := by sorry
-  inf := by sorry
-  inf_le_left := by sorry
-  inf_le_right := by sorry
-  le_inf := by sorry
+  sup_le := by
+    intro a b c hac hbc
+    obtain ⟨x, z, hxz, hxa, hzc⟩ := lift_inequality I hac
+    obtain ⟨y, w, hyw, hyb, hwc⟩ := lift_inequality I hbc
+    rw [← hxa, ← hyb]
+    rw [← mkQ_map_sup]
+    have : c = I.mkQ (z ⊔ w) := by
+      rw [mkQ_map_sup, hzc, ← hwc, ← mkQ_map_sup]
+      simp
+    use z ⊔ w - x ⊔ y
+    constructor
+    · simp
+      exact ⟨le_sup_of_le_left hxz, le_sup_of_le_right hyw⟩
+    · simp [this]
+  inf := quot_inf I
+  inf_le_left := by
+    intro a b
+    obtain ⟨x,hx⟩ := (Submodule.Quotient.mk_surjective I.toSubmodule) a
+    obtain ⟨y,hy⟩ := (Submodule.Quotient.mk_surjective I.toSubmodule) b
+    use x - x ⊓ y
+    constructor
+    · simp
+    · rw [← hx, ← hy, ← Submodule.mkQ_apply,
+          ← Submodule.mkQ_apply, ← mkQ_map_inf]
+      simp
+  inf_le_right := by
+    intro a b
+    obtain ⟨x,hx⟩ := (Submodule.Quotient.mk_surjective I.toSubmodule) a
+    obtain ⟨y,hy⟩ := (Submodule.Quotient.mk_surjective I.toSubmodule) b
+    use y - x ⊓ y
+    constructor
+    · simp
+    · rw [← hx, ← hy, ← Submodule.mkQ_apply,
+          ← Submodule.mkQ_apply, ← mkQ_map_inf]
+      simp
+  le_inf := by
+    intro a b c hab hac
+    obtain ⟨x, y, hxy, hxa, hyb⟩ := lift_inequality I hab
+    obtain ⟨w, z, hwz, hwa, hzc⟩ := lift_inequality I hac
+    rw [← hyb, ← hzc]
+    rw [← mkQ_map_inf]
+    have : a = I.mkQ (x ⊓ w) := by
+      rw [mkQ_map_inf, hxa, ← hwa, ← mkQ_map_inf]
+      simp
+    use y ⊓ z - x ⊓ w
+    constructor
+    · simp
+      exact ⟨inf_le_of_left_le hxy, inf_le_of_right_le hwz⟩
+    · simp [this]
 
 instance instIsOrderedAddMonoid : IsOrderedAddMonoid (X ⧸ I) where
   add_le_add_left := by
@@ -126,8 +209,12 @@ instance instVectorLattice : VectorLattice (X ⧸ I) where
 
 def mkQ : VecLatHom X (X ⧸ I) := {
   I.mkQ with
-    map_sup' := by sorry
-    map_inf' := by sorry
+    map_sup' := by
+      intro x y
+      exact mkQ_map_sup I x y
+    map_inf' := by
+      intro x y
+      exact mkQ_map_inf I x y
   }
 
 end Quotient
