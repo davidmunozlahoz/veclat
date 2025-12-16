@@ -218,4 +218,30 @@ theorem one_dim (x y : X) (ypos : 0 < Quotient.mkQ I y) :
   | inr x'nonneg =>
     exact one_dim_pos I x y x'nonneg ypos
 
+variable (e : X) (epos : 0 < Quotient.mkQ I e)
+
+def real_map : VecLatHom ℝ (X ⧸ I) where
+  toFun := fun t => t • Quotient.mkQ I e
+  map_add' := by
+    intro t s
+    exact add_smul t s _
+  map_smul' := by
+    intro t s
+    simp
+    exact mul_smul t s ((Quotient.mkQ I) e)
+  map_sup' := by sorry
+  map_inf' := by sorry
+
+lemma real_map_injective : Function.Injective (real_map I e) := sorry
+lemma real_map_surjective : Function.Surjective (real_map I e) := sorry
+lemma real_map_bijective : Function.Bijective (real_map I e) := sorry
+
+noncomputable def character : VecLatHom X ℝ :=
+  VecLatHom.comp (VecLatHom.symm (real_map I e) (real_map_bijective I e)) (Quotient.mkQ I)
+
+theorem character_basis : (character I e) e = 1 := by sorry
+
+theorem character_eval_I (x : X) (xmem : x ∈ I) : (character I e) x = 0 := by
+  sorry
+
 end Maximal

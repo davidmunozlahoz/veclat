@@ -108,7 +108,7 @@ instance instSetLike : SetLike (VectorOrderIdeal X) X where
 theorem ext {s t : VectorOrderIdeal X} (h : ∀ x, x ∈ s ↔ x ∈ t) : s = t :=
   SetLike.ext h
 
-lemma mem_iff_abs_mem {I : VectorOrderIdeal X} {x : X} : x ∈ I ↔ |x| ∈ I := by
+theorem mem_iff_abs_mem {I : VectorOrderIdeal X} {x : X} : x ∈ I ↔ |x| ∈ I := by
   constructor
   · exact I.abs_mem
   · intro h
@@ -116,11 +116,18 @@ lemma mem_iff_abs_mem {I : VectorOrderIdeal X} {x : X} : x ∈ I ↔ |x| ∈ I :
       rw [abs_abs]
     exact I.solid this h
 
-lemma sub_mem_sup_sub_sup_mem {I : VectorOrderIdeal X} {x y y' : X}
+theorem sub_mem_sup_sub_sup_mem {I : VectorOrderIdeal X} {x y y' : X}
   (h : y - y' ∈ I) : x ⊔ y - x ⊔ y' ∈ I := by
   have : |x ⊔ y - x ⊔ y'| ≤ |y - y'| := by
     rw [sup_comm, sup_comm x y']
     exact abs_sup_sub_sup_le_abs y y' x
+  exact I.solid this h
+
+theorem sub_mem_inf_sub_inf_mem {I : VectorOrderIdeal X} {x y y' : X}
+  (h : y - y' ∈ I) : x ⊓ y - x ⊓ y' ∈ I := by
+  have : |x ⊓ y - x ⊓ y'| ≤ |y - y'| := by
+    rw [inf_comm, inf_comm x y']
+    exact abs_inf_sub_inf_le_abs y y' x
   exact I.solid this h
 
 variable {Y : Type u} [AddCommGroup Y] [Lattice Y] [IsOrderedAddMonoid Y] [VectorLattice Y]
@@ -150,7 +157,7 @@ def comap (f : VecLatHom X Y) (Z : VectorOrderIdeal Y) :
       exact Z.solid this ymem
   }
 
-lemma mem_comap (f : VecLatHom X Y) (Z : VectorOrderIdeal Y) (x : X) :
+theorem mem_comap (f : VecLatHom X Y) (Z : VectorOrderIdeal Y) (x : X) :
     x ∈ comap f Z ↔ f x ∈ Z := by
   simp only [comap]
   rfl
