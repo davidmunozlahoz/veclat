@@ -100,6 +100,14 @@ def comp {Z : Type*} [AddCommGroup Z] [Lattice Z] [IsOrderedAddMonoid Z]
       simp
   }
 
+theorem comp_apply {Z : Type*} [AddCommGroup Z] [Lattice Z]
+  [IsOrderedAddMonoid Z] [VectorLattice Z] (g : VecLatHom Y Z)
+  (f : VecLatHom X Y) (x : X) : g.comp f x = g (f x) := by
+    rw [comp]
+    change (LinearMap.comp g.toLinearMap f.toLinearMap) x = g (f x)
+    simp
+    rfl
+
 noncomputable def symm (f : VecLatHom X Y) (h : Function.Bijective f) : VecLatHom Y X :=
   {(LinearEquiv.ofBijective f.toLinearMap h).symm with
     map_sup' := by
@@ -137,5 +145,11 @@ noncomputable def symm (f : VecLatHom X Y) (h : Function.Bijective f) : VecLatHo
                 ((LinearEquiv.ofBijective f.toLinearMap h).symm b)
       rw [LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
   }
+
+theorem symm_apply (f : VecLatHom X Y) (h : Function.Bijective f)
+  (x : X) (y : Y) : (f.symm h) y = x ↔ y = f x := by
+    let lineq := LinearEquiv.ofBijective f.toLinearMap h
+    change lineq.symm y = x ↔ y = f x
+    apply LinearEquiv.symm_apply_eq
 
 end VecLatHom
