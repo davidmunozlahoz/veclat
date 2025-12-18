@@ -29,6 +29,13 @@ theorem isVecLatHom (f : VecLatHom X Y) : IsVecLatHom f where
   map_sup' := f.toLatticeHom.map_sup'
   map_inf' := f.toLatticeHom.map_inf'
 
+def of_isVecLatHom (f : X → Y) (h : IsVecLatHom f) : VecLatHom X Y where
+  toFun := f
+  map_add' := h.map_add
+  map_smul' := h.map_smul
+  map_sup' := h.map_sup'
+  map_inf' := h.map_inf'
+
 instance instLatticeHomClass : LatticeHomClass (VecLatHom X Y) X Y where
   map_inf := by
     intro f a b

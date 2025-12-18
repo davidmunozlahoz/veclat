@@ -172,7 +172,7 @@ theorem abs_smul' (a : ℝ) : |a • x| = |a| • |x| := by
     rw [nonneg_smul_sup x (-x) (-a) (by linarith)]
     simp [sup_comm]
 
-lemma disjoint_smul (a : ℝ) (nonneg : 0 ≤ a) (h : x ⊓ y = 0) :
+theorem disjoint_smul (a : ℝ) (nonneg : 0 ≤ a) (h : x ⊓ y = 0) :
     (a • x) ⊓ y = 0 := by
   let aux (x y : X) (h : x ⊓ y = 0) (a : ℝ)
   (nonneg : 0 ≤ a) (hone : a ≤ 1) : (a • x) ⊓ y = 0 := by
@@ -228,7 +228,7 @@ lemma infinitesimal_is_zero {x y : X}
     apply lt_of_le_of_lt infinitesimal hn
   apply lt_irrefl (n • |x|) this
 
-lemma arch' {x y : X} (h : ∀ n : ℕ, n • x ≤ y) : x ≤ 0 := by
+theorem arch' {x y : X} (h : ∀ n : ℕ, n • x ≤ y) : x ≤ 0 := by
   apply (leq_posPart_negPart x 0).mpr
   constructor
   · have : ∀ n : ℕ, n • |x⁺| ≤ y⁺ := by

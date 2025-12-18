@@ -47,6 +47,38 @@ theorem norm_nonneg : 0 ≤ norm e x := by
     exact hs.1
   · simp
 
+theorem norm_unit (nonzero : e ≠ 0) : norm e e = 1 := by
+  rw [norm_def]
+  apply le_antisymm
+  · have : 1 ∈ (S e e) := by
+      constructor
+      · norm_num
+      · simp [abs_of_nonneg (unit_pos e)]
+    exact csInf_le (S_bddbelow e e) this
+  · apply le_csInf (S_nonempty e e)
+    intro t ht
+    obtain ⟨ht1, ht2⟩ := ht
+    rw [abs_of_nonneg (unit_pos e)] at ht2
+    cases le_or_gt 1 t with
+      | inl h => exact h
+      | inr h =>
+        have leq : t • e ≤ e := by
+          exact smul_le_of_le_one_left (unit_pos e) (le_of_lt h)
+        have ne : t • e ≠ e := by
+          by_contra hcon
+          suffices (t - 1) • e = 0 by
+            rw [smul_eq_zero] at this
+            cases this with
+            | inl g =>
+              rw [sub_eq_zero] at g
+              rw [g] at h
+              simp at h
+            | inr g => contradiction
+          rw [sub_smul, one_smul, sub_eq_zero, hcon]
+        have lt : t • e < e := lt_of_le_of_ne leq ne
+        have : e < e := lt_of_le_of_lt ht2 lt
+        simp at this
+
 theorem gt_norm (t : ℝ) (h : norm e x < t) : |x| ≤ t • e := by
   rw [norm_def] at h
   rw [csInf_lt_iff (S_bddbelow e x) (S_nonempty e x)] at h

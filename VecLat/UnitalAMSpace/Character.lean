@@ -74,12 +74,104 @@ theorem exist (x : X) (h : 1 < norm e x) :
 
 def Characters : Set (WeakDual ℝ X) := { φ | IsVecLatHom φ ∧ φ e = 1}
 
-theorem attains_norm_at_Characters (x : X) :
-    norm e x = sSup { |φ x| | φ ∈ Characters e } := by sorry
-  /- apply le_antisymm -/
-  /- · sorry -/
-  /- · apply csSup_le -/
-  /-   sorry -/
+theorem character_contractive (φ : VecLatHom X ℝ) (h : φ e = 1) (x : X) : |φ x| ≤ norm e x := by
+  calc
+    |φ x| = φ |x| := by exact Eq.symm (VecLatHom.map_abs φ x)
+        _ ≤ φ ((norm e x) • e) := by
+          apply VecLatHom.monotone φ
+          exact norm_attained e x
+        _ = (norm e x) • φ e := by simp
+        _ = norm e x := by simp [h]
+
+def toStrongDual (φ : VecLatHom X ℝ) (h : φ e = 1) : StrongDual ℝ X := by
+  apply LinearMap.mkContinuousOfExistsBound φ
+  use 1
+  intro x
+  simp
+  exact character_contractive e φ h x
+
+def character_ofVecLatHom (φ : VecLatHom X ℝ) (h : φ e = 1) :
+    Characters e := by
+  use toStrongDual e φ h
+  constructor
+  · change IsVecLatHom φ
+    exact VecLatHom.isVecLatHom φ
+  · exact h
+
+lemma characters_nonempty (nonzero : e ≠ 0) : (Characters e).Nonempty := by
+  have : 1 < norm e ((2:ℝ) • e) := by
+    rw [norm_smul e e (2:ℝ), norm_unit e nonzero]
+    norm_num
+  obtain ⟨φ, h1, h2⟩ := exist e ((2:ℝ) • e) this
+  use toStrongDual e φ h1
+  constructor
+  · change IsVecLatHom φ
+    exact VecLatHom.isVecLatHom φ
+  · change φ e = 1
+    exact h1
+
+lemma eval_characters_nonempty (nonzero : e ≠ 0) (x : X) :
+    { |φ x| | φ ∈ Characters e }.Nonempty := by
+  obtain ⟨φ, h⟩ := characters_nonempty e nonzero
+  use |φ x|
+  simp
+  use φ
+
+lemma eval_characters_bddabove (x : X) :
+    BddAbove ({ |φ x| | φ ∈ Characters e }) := by
+  use norm e x
+  intro t ht
+  obtain ⟨φ, hφ1, hφ2⟩ := ht
+  obtain ⟨h11, h12⟩ := hφ1
+  rw [← hφ2]
+  exact character_contractive e (VecLatHom.of_isVecLatHom φ h11) h12 x
+
+theorem attains_norm_at_characters (nonzero : e ≠ 0) (x : X) :
+    norm e x = sSup { |φ x| | φ ∈ Characters e } := by
+  have norm_le_char : sSup { |φ x| | φ ∈ Characters e } ≤ norm e x := by
+    refine csSup_le (eval_characters_nonempty e nonzero x) ?_
+    intro t ht
+    obtain ⟨φ, hφ1, hφ2⟩ := ht
+    rw [← hφ2]
+    obtain ⟨h, h'⟩ := hφ1
+    let φ' := VecLatHom.of_isVecLatHom φ h
+    exact character_contractive e φ' h' x
+  cases le_or_gt (norm e x) (sSup { |φ x| | φ ∈ Characters e }) with
+    | inl h =>
+      apply le_antisymm
+      · exact h
+      · exact norm_le_char
+    | inr h =>
+      obtain ⟨t, ht1, ht2⟩ := exists_between h
+      have : 0 ≤ sSup { |φ x| | φ ∈ Characters e } := by
+        obtain ⟨s, hs⟩ := eval_characters_nonempty e nonzero x
+        obtain ⟨h1, h2, h3⟩ := hs
+        have : 0 ≤ s := by rw [← h3]; norm_num
+        apply le_trans this
+        exact le_csSup (eval_characters_bddabove e x) ⟨h1, h2, h3⟩
+      have t_pos : 0 < t := Std.lt_of_le_of_lt this ht1
+      have : 1 < norm e (t⁻¹ • x) := by
+        rw [norm_smul]
+        simp
+        field_simp
+        rw [abs_of_nonneg (le_of_lt t_pos)]
+        exact ht2
+      obtain ⟨φ, hφ1, hφ2⟩ := exist e (t⁻¹ • x) this
+      rw [VecLatHom.map_abs, map_smul, abs_smul, abs_inv] at hφ2
+      simp at hφ2
+      field_simp at hφ2
+      rw [abs_of_nonneg (le_of_lt t_pos)] at hφ2
+      have : |φ x| ≤ sSup { |φ x| | φ ∈ Characters e } := by
+        refine le_csSup (eval_characters_bddabove e x) ?_
+        simp
+        use (character_ofVecLatHom e φ hφ1)
+        constructor
+        · simp
+        · change |φ x| = |φ x|
+          simp
+      apply le_trans hφ2 at this
+      have : t < t := Std.lt_of_le_of_lt this ht1
+      simp at this
 
 theorem closed : IsClosed (Characters e) := by sorry
 
