@@ -2,8 +2,10 @@
 
 ℹ️ The goal of this project is to formalize (part of) the theory of vector and Banach lattices in [Lean](https://lean-lang.org/).
 
-⛏️ Currently we are working toward a proof of the **Kakutani—Bohnenblust—Krein theorem**: an AM-space with unit e is
+🎉 We have successfully formalized the **Kakutani—Bohnenblust—Krein representation theorem**: every AM-space with unit e is
 isomorphic to a dense sublattice of C(K), for some compact Hausdorff space K, with e going to the constant one function.
+
+⛏️ Currently we are working on the vector lattice structure of the dual of a normed vector lattice and on establishing the duality between AL and AM-spaces.
 
 📖 [Blueprint](https://davidmunozlahoz.github.io/veclat/blueprint) (🚧 under construction 🚧).
 
