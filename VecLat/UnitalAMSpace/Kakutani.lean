@@ -1,6 +1,8 @@
 import VecLat.UnitalAMSpace.Character
 import VecLat.CofK
 
+import Mathlib.Topology.ContinuousMap.StoneWeierstrass
+
 open UnitalAMSpace Maximal
 
 variable (X : Type*) [AddCommGroup X] [Lattice X] [IsOrderedAddMonoid X]
@@ -70,10 +72,65 @@ lemma KT_unit_one : KT X e e = 1 := by
   change φ e = 1
   exact h2
 
-lemma KT_dense_range : Dense (Set.range (KT X e)) := by sorry
+lemma KT_dense_range : DenseRange (KT X e) := by
+  rw [DenseRange, dense_iff_closure_eq]
+  apply ContinuousMap.sublattice_closure_eq_top
+  case nA =>
+    use 1
+    use e
+    exact KT_unit_one X e
+  case inf_mem =>
+    intro f hf g hg
+    obtain ⟨x, hx⟩ := hf
+    obtain ⟨y, hy⟩ := hg
+    use x ⊓ y
+    rw [← hx, ← hy]
+    exact VecLatHom.map_inf' (IsVecLatHom.mk' (KT X e) (KT_veclathom X e)) x y
+  case sup_mem =>
+    intro f hf g hg
+    obtain ⟨x, hx⟩ := hf
+    obtain ⟨y, hy⟩ := hg
+    use x ⊔ y
+    rw [← hx, ← hy]
+    exact VecLatHom.map_sup' (IsVecLatHom.mk' (KT X e) (KT_veclathom X e)) x y
+  case sep =>
+    intro v φ ψ
+    by_cases heq : φ = ψ
+    case pos =>
+      use (v φ) • 1
+      constructor
+      · use (v φ) • e
+        rw [(KT_veclathom X e).map_smul, KT_unit_one X e]
+      · constructor
+        · simp
+        · rw [heq]; simp
+    case neg =>
+      push_neg at heq
+      have : ⇑φ.val ≠ ⇑ψ.val := by
+        intro hval
+        apply heq
+        apply Subtype.ext
+        exact DFunLike.coe_injective hval
+      obtain ⟨x, hx⟩ := Function.ne_iff.mp this
+      rw [← sub_ne_zero] at hx
+      let y :=
+        (φ.val x - ψ.val x)⁻¹ • ( v φ • (x - (ψ.val x) • e) +
+          v ψ • ((φ.val x) • e - x))
+      use KT X e y
+      constructor
+      · use y
+      · constructor
+        · change φ.val y = v φ
+          unfold y
+          simp [φ.prop.2]
+          field_simp
+        · change ψ.val y = v ψ
+          unfold y
+          simp [ψ.prop.2]
+          field_simp
 
-theorem Kakutani : (IsVecLatHom (KT X e)) ∧ (∀ x : X, ‖x‖=‖KT X e x‖) ∧ (Dense
-  (Set.range (KT X e))) ∧ (KT X e e = 1) := by
+theorem Kakutani : (IsVecLatHom (KT X e)) ∧ (∀ x : X, ‖x‖=‖KT X e x‖)
+∧ (DenseRange (KT X e)) ∧ (KT X e e = 1) := by
   by_cases h : e = 0
   · exact
       ⟨KT_veclathom X e, zero_KT_isometry X e h, KT_dense_range X e, KT_unit_one X e⟩

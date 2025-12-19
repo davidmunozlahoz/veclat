@@ -3,6 +3,8 @@ import VecLat.VectorOrderIdeal.Maximal
 import VecLat.VectorOrderIdeal.Quotient
 
 import Mathlib.Topology.Algebra.Module.WeakDual
+import Mathlib.Analysis.Normed.Module.WeakDual
+import Mathlib.Topology.Bornology.Basic
 
 namespace UnitalAMSpace
 
@@ -173,10 +175,55 @@ theorem attains_norm_at_characters (nonzero : e ≠ 0) (x : X) :
       have : t < t := Std.lt_of_le_of_lt this ht1
       simp at this
 
-theorem closed : IsClosed (Characters e) := by sorry
+def map_abs_set (x : X) : Set (WeakDual ℝ X) :=
+  { φ | φ |x| = |φ x| }
 
-theorem compact : IsCompact (Characters e) := by sorry
-  /- Use:  WeakDual.isCompact_of_bounded_of_closed -/
+lemma map_abs_set_closed (x : X) : IsClosed (map_abs_set e x) := by
+  apply isClosed_eq (WeakDual.eval_continuous |x|)
+  let ev := fun (φ : WeakDual ℝ X) => φ x
+  change Continuous (abs ∘ ev)
+  apply Continuous.comp
+  · exact continuous_abs
+  · exact WeakDual.eval_continuous x
+
+lemma inter_map_abs_set :
+    ⨅ x : X, map_abs_set e x = { φ : WeakDual ℝ X | IsVecLatHom φ } := by
+  ext φ
+  constructor
+  · intro h
+    simp at h
+    exact IsVecLatHom.of_abs φ.isLinear h
+  · intro h s hs
+    simp at *
+    obtain ⟨x, hx⟩ := hs
+    rw [← hx]
+    unfold map_abs_set
+    simp
+    exact (VecLatHom.map_abs (IsVecLatHom.mk' φ h)) x
+
+lemma isVecLatHom_closed : IsClosed { φ : WeakDual ℝ X | IsVecLatHom φ } := by
+  rw [← inter_map_abs_set]
+  exact isClosed_iInter (map_abs_set_closed e)
+
+lemma closed : IsClosed (Characters e) := by
+  unfold Characters
+  apply IsClosed.inter
+  · exact isVecLatHom_closed e
+  · exact isClosed_eq (WeakDual.eval_continuous e) continuous_const
+
+lemma bounded : Bornology.IsBounded (⇑StrongDual.toWeakDual ⁻¹' (Characters e)) := by
+  rw [← NormedSpace.isVonNBounded_iff ℝ, NormedSpace.isVonNBounded_iff' ℝ]
+  use 1
+  intro φ h
+  apply ContinuousLinearMap.opNorm_le_bound
+  · norm_num
+  · intro x
+    simp
+    simp at h
+    exact character_contractive e (IsVecLatHom.mk' φ h.1) h.2 x
+
+theorem compact : IsCompact (Characters e) := by
+  exact WeakDual.isCompact_of_bounded_of_closed (bounded e) (closed e)
 
 instance instCompactSpace : CompactSpace (Characters e) := by
   exact isCompact_iff_compactSpace.mp (compact e)

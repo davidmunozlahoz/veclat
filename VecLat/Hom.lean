@@ -160,3 +160,22 @@ theorem symm_apply (f : VecLatHom X Y) (h : Function.Bijective f)
     apply LinearEquiv.symm_apply_eq
 
 end VecLatHom
+
+namespace IsVecLatHom
+
+def mk' (f : X → Y) (vlh : IsVecLatHom f) : VecLatHom X Y where
+  toFun := f
+  map_add' := vlh.1.1
+  map_smul' := vlh.1.2
+  map_sup' := vlh.2
+  map_inf' := vlh.3
+
+@[simp]
+theorem mk'_apply {f : X → Y} (vlh : IsVecLatHom f) (x : X) :
+    mk' f vlh x = f x := rfl
+
+theorem of_abs {f : X → Y} (lin : IsLinearMap ℝ f) (abs : ∀ x : X, f |x|
+  = |f x|) : IsVecLatHom f :=
+  VecLatHom.isVecLatHom (VecLatHom.of_abs (IsLinearMap.mk' f lin) abs)
+
+end IsVecLatHom
